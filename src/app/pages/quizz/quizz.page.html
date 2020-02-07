@@ -1,0 +1,42 @@
+<ion-header translucent no-border>
+    <ion-toolbar color="primary">
+      <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+          <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g class="parallax">
+            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+          </g>
+        </svg>
+      </div>
+      <ion-buttons slot="start">
+        <ion-back-button color="light"></ion-back-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content fullscreen >
+    
+    <h2>{{Question}}</h2>
+    <img class="question"  src="{{Image}}">
+    <ion-button margin expand="full" shape="round" color="light" (click)='Play()'>
+      <ion-icon slot="icon-only" name="musical-notes"></ion-icon>
+    </ion-button>
+    <ion-button margin shape="round" expand="full" id="1" #first ion-button color="primary" (click)='Response(first)' disabled={{buttonDisabled}}>
+        {{FirstOption}}
+    </ion-button>
+    <ion-button margin shape="round" expand="full" id="2" #second ion-button color="primary" (click)='Response(second)' disabled={{buttonDisabled}}>
+        {{SecondOption}}
+    </ion-button>
+    <ion-button margin shape="round" expand="full" id="3" #third ion-button color="primary" (click)='Response(third)' disabled={{buttonDisabled}}>
+        {{ThirdOption}}
+    </ion-button>
+    <ion-button margin shape="round" expand="full" id="4" #fourth ion-button color="primary" (click)='Response(fourth)' disabled={{buttonDisabled}}>
+        {{FourthOption}}
+    </ion-button>
+  </ion-content>

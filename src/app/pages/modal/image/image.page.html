@@ -1,0 +1,59 @@
+
+  <ion-app>
+    <ion-header translucent>
+      <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+          <ion-button size="small" shape="round" (click)="closeModal()" color="light">
+            <ion-icon slot="start" name="close"></ion-icon> Sair
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content fullscreen padding scroll-y="false">
+      <ion-slides>
+
+        <ion-slide>
+          <img src="assets/img/madeinpt.jpg"/>
+          <h2>Welcome to the <b>ICA</b></h2>
+          <p>The <b>ionic conference app</b> is a practical preview of the ionic framework in action, and a demonstration of proper code use.</p>
+        </ion-slide>
+
+        <ion-slide>
+          <img src="assets/img/madeinpt.jpg"/>
+          <h2>What is Ionic?</h2>
+          <p><b>Ionic Framework</b> is an open source SDK that enables developers to build high quality mobile apps with web technologies like HTML, CSS, and JavaScript.</p>
+        </ion-slide>
+
+        <ion-slide>
+          <img src="assets/img/madeinpt.jpg"/>
+          <h2>What is Ionic Appflow?</h2>
+          <p><b>Ionic Appflow</b> is a powerful set of services and features built on top of Ionic Framework that brings a totally new level of app development agility to mobile dev teams.</p>
+        </ion-slide>
+
+        <ion-slide>
+          <img src="assets/img/madeinpt.jpg"/>
+          <h2>Estás Preparado?</h2>
+          <ion-button fill="clear" (click)="closeModal()">Sim <ion-icon slot="end" name="arrow-forward" ></ion-icon></ion-button>
+        </ion-slide>
+      </ion-slides>
+    </ion-content>
+
+    <ion-footer>
+      <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+          <defs>
+            <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g class="parallax">
+            <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(40, 114, 184, 0.7"/>
+            <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(40, 114, 184, 0.5)"/>
+            <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(40, 114, 184, 0.3)"/>
+            <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(40, 114, 184, 1.0)"/>
+          </g>
+        </svg>
+      </div>
+    </ion-footer>
+  </ion-app>
+

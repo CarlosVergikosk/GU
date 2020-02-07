@@ -1,0 +1,76 @@
+<ion-content padding class="login auth-page">
+
+  <div class="auth-content">
+    <!-- Logo -->
+    <div padding-horizontal text-center>
+      <div class="logo"></div>
+    </div>
+
+    <!-- Register form -->
+    <form [formGroup]="onRegisterForm" class="list-form">
+      <ion-item no-padding class="animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="person" item-start></ion-icon>
+          {{ 'REGISTER.NAME' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="text" [(ngModel)]="username" formControlName="fullName"></ion-input>
+      </ion-item>
+
+      <ion-item no-padding class="animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="mail" item-start></ion-icon>
+          {{ 'REGISTER.EMAIL' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="email" [(ngModel)]="email" formControlName="email"></ion-input>
+      </ion-item>
+
+      <ion-item no-padding class="animated fadeInUp">
+        <ion-label position="floating">
+          <ion-icon name="lock" item-start></ion-icon>
+          {{ 'REGISTER.PASSWORD' | translate }}
+        </ion-label>
+        <ion-input color="secondary" type="password" [(ngModel)]="password" formControlName="password"></ion-input>
+      </ion-item>
+    </form>
+
+    <ion-item no-padding class="animated fadeInUp">
+      <ion-label position="floating"  color="light" >
+        <ion-icon name="egg" item-start></ion-icon>
+        Data de Nascimento
+      </ion-label>
+      <ion-datetime displayFormat="YYYY, MM, DD" color="light" [(ngModel)]="age" value="Selecione a data de "></ion-datetime>
+    </ion-item>
+
+    <div margin-top>
+      <ion-button icon-left size="medium" expand="full" shape="round" color="light" (click)="prosesRegister()" [disabled]="!onRegisterForm.valid"
+        tappable>
+        <p class="p" >{{ 'REGISTER.REGISTER' | translate }}</p>
+      </ion-button>
+    </div>
+
+    <!-- Other links -->
+    <div text-center margin-top>
+      <span (click)="goToLogin()" tappable>
+        <ion-text color="light">
+          <b></b>{{ 'REGISTER.ALREADYACCOUNT' | translate }}
+        </ion-text>
+      </span>
+    </div>
+
+    <div>
+      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+      </svg>
+    </div>
+
+  </div>
+</ion-content>

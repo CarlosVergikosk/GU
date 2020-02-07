@@ -1,0 +1,71 @@
+{
+    "QUIZZ": {
+      "TRUE": "True",
+      "FALSE": "False"
+    },
+  
+    "LOGIN": {
+      "LOGIN": "Login",
+      "EMAIL": "Email",
+      "FORGOTPASSWORD": "Forgot Password?",
+      "PASSWORD": "Password",
+      "NEWHERE": "New here? Register",
+      "CANCEL": "Cancel",
+      "CONFIRM": "Confirm",
+      "PASSWORDMESSAGE": "If that email exists, a password has been sent!"
+    },
+
+    "REGISTER": {
+        "NAME": "Name",
+        "EMAIL": "Email",
+        "PASSWORD": "Password",
+        "REGISTER": "Register",
+        "SUCESSFULL": "Successfully Registed",
+        "PLEASEWAIT": "Please, wait...",
+        "ALREADYACCOUNT": "Already registed? Login"
+    },
+
+    "SETTINGS": {
+        "SETTINGS": "Settings",
+        "EDIT": "Edit",
+        "LEAVE": "Logout",
+        "GENERAL": "General",
+        "PORTUGUESE": "Portuguese",
+        "ENGLISH": "English",
+        "SPANISH": "Spanish",
+        "FRENCH": "French",
+        "ENABLENOTIFY": "Enable Notifications",
+        "LANGUAGE": "Language"
+    },
+
+    "HOME": {
+        "LEARN": "Learn",
+        "SPEECHQUIZZ": "Speech Quizz",
+        "RIMESQUIZZ": "Rimes Quizz",
+        "ANIMALSQUIZZ": "Animals Quizz"
+    },
+
+    "APP": {
+      "MENU": "Menu",
+      "EDITPROFILE": "Edit Profile",
+      "SETTINGS": "Settings",
+      "ABOUT": "About",
+      "WELCOME": "Welcome,"
+    },
+
+    "EDIT": {
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "SAVE": "Save",
+      "PROFILEPHOTO": "Profile Avatar",
+      "DATA_SAVED": "Data has been saved!",
+      "DATA_NOTSAVED": "An error has occured!"
+    },
+
+    "API": {
+      "ACCOUNT_INACTIVE": "Account Inactive",
+      "ACCOUNT_UNREGISTED": "Account Unregisted",
+      "ERRO_OCCURRED": "Sorry, an error has occurred!",
+      "PLEASE_WAIT": "Please, wait"
+    }
+  }

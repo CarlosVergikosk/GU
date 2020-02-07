@@ -86,3 +86,13 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+platforms/
+
+plugins/
+
+resources/
+
+www/
+
+e2e/

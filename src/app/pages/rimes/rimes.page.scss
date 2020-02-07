@@ -1,0 +1,162 @@
+:host {
+    ion-content {
+        padding-top: 10%;
+    }
+
+    ion-card {
+        &.no-radius {
+            border-radius: 0;
+        }
+    }
+}
+
+h2 {
+  color: var(--ion-color-primary);;
+  text-align: center;
+}
+
+img {
+  text-align: center;
+  height: 200px;
+  width: 200px;
+  margin: auto;
+  display: block;
+}
+
+.flex { /*Flexbox for containers*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 190%;
+    height:3vh;
+    margin-bottom:-7px; /*Fix for safari gap*/
+    min-height:100px;
+    max-height:150px;
+  }
+  
+  .content {
+    position:relative;
+    height:3vh;
+    text-align:center;
+    padding-bottom: 0 !important;
+  }
+
+  
+  
+  /* Animation */
+  
+  .parallax > use {
+    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+  }
+  .parallax > use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 9s;
+  }
+  .parallax > use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 12s;
+  }
+  .parallax > use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 15s;
+  }
+  .parallax > use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 22s;
+  }
+  @keyframes move-forever {
+    0% {
+     transform: translate3d(-90px,0,0);
+    }
+    100% { 
+      transform: translate3d(85px,0,0);
+    }
+  }
+  /*Shrinking for mobile*/
+  @media (max-width: 768px) {
+    .waves {
+      height:40px;
+      min-height:10px;
+    }
+    .content {
+      height:50vh;
+    }
+    h1 {
+      font-size:24px;
+    }
+  }  
+  
+  @keyframes animateSprite {
+    0% {
+      background-position: -600px; /* Starting position moving left sprite */
+    }
+    20% {
+      background-position: 0px; /* Straight on sprite */
+    }
+    25% {
+      background-position: -200px; /* Moving up sprite */
+    }
+    35% {
+      background-position: -400px; /* Moving right sprite */
+    }
+    40% {
+      background-position: -400px;
+    }
+    50% {
+      background-position: -200px;  /* Moving up sprite */
+    }
+    60% {
+      background-position: -0px; /* Straight on sprite */
+    }
+    67% {
+      background-position: -600px; /* Moving up sprite */
+    }
+  
+    100% {
+      background-position: -600px;
+    }
+  }
+  
+  @keyframes swim {
+    0% {
+      transform: translate(0, 0); /* Starting position */
+    }
+    20% {
+      transform: translate(calc(-50vw - 100px), 0); /* Animate to center of screen */
+    }
+    25% {
+      transform: translate(calc(-50vw - 100px), 0); /* Stay at the center for 1 second */
+    }
+    35% {
+      transform: translate(calc(-50vw - 100px), -20vh); /* Animate up for 2 seconds */
+    }
+    50% {
+      transform: translate(-25vw, 15vh); /* Animate bottom right for 3 seconds */
+    }
+    60% {
+      transform: translate(-25vw, -20vh); /* Animate up at right of the screen */
+    }
+    67% {
+      transform: translate(-25vw, -20vh);
+    }
+  
+    100% {
+      transform: translate(calc(-100vw - 300px), 0); /* Animate past left past the screen */
+    }
+  }
+  .ocean {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--ion-color-light);
+  }
+  
+
+

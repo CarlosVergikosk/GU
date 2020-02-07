@@ -1,0 +1,71 @@
+{
+    "QUIZZ": {
+      "TRUE": "Verdadeiro",
+      "FALSE": "Falso"
+    },
+  
+    "LOGIN": {
+      "LOGIN": "Entrar",
+      "EMAIL": "Email",
+      "FORGOTPASSWORD": "Recuperar Password?",
+      "PASSWORD": "Password",
+      "NEWHERE": "Novo? Registe-se Já",
+      "CANCEL": "Cancelar",
+      "CONFIRM": "Confirmar",
+      "PASSWORDMESSAGE": "Enviaremos uma password caso esse email exista!"
+    },
+
+    "REGISTER": {
+        "NAME": "Nome",
+        "EMAIL": "Email",
+        "PASSWORD": "Password",
+        "REGISTER": "Registar",
+        "SUCESSFULL": "Registo Efectuado",
+        "PLEASEWAIT": "Por favor, aguarde...",
+        "ALREADYACCOUNT": "Já tem conta? Entre já"
+    },
+
+    "SETTINGS": {
+        "SETTINGS": "Definições",
+        "EDIT": "Editar",
+        "LEAVE": "Sair",
+        "GENERAL": "Geral",
+        "PORTUGUESE": "Português",
+        "ENGLISH": "Inglês",
+        "SPANISH": "Espanhol",
+        "FRENCH": "Françês",
+        "ENABLENOTIFY": "Ativar Notificações",
+        "LANGUAGE": "Idioma"
+    },
+
+    "HOME": {
+      "LEARN": "Aprendizagem",
+      "SPEECHQUIZZ": "Quizz Voz",
+      "RIMESQUIZZ": "Quizz Rimas",
+      "ANIMALSQUIZZ": "Quizz Animais"
+    },
+
+    "APP": {
+      "MENU": "Menu",
+      "EDITPROFILE": "Editar Perfil",
+      "SETTINGS": "Definições",
+      "ABOUT": "Sobre",
+      "WELCOME": "Bem-vindo,"
+    },
+
+    "EDIT": {
+      "NAME": "Nome",
+      "EMAIL": "Email",
+      "SAVE": "Guardar",
+      "PROFILEPHOTO": "Avatar de Perfil",
+      "DATA_SAVED": "Dados Guardados",
+      "DATA_NOTSAVED": "Ocorreu um Erro"
+    },
+
+    "API": {
+      "ACCOUNT_INACTIVE": "Essa conta foi desativada!",
+      "ACCOUNT_UNREGISTED": "Essa conta não existe!",
+      "ERRO_OCCURRED": "Desculpe, ocorreu um erro!",
+      "PLEASE_WAIT": "Por favor, aguarde.."
+    }
+  }

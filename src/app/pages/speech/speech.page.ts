@@ -2,6 +2,7 @@ import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
+import {  NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-speech',
@@ -13,13 +14,13 @@ export class SpeechPage {
   Questions=[
     
     { Question: 'Cão rima com: ?',
-      true: '4'
+      word: 'Pão'
     },
     { Question: 'Sal rima com: ?',
-      true: '2'
+      word: 'Cal'
     },
     { Question: 'Bola rima com: ?',
-      true: '3' 
+      word: 'Bola' 
     },
 
   ]
@@ -27,96 +28,69 @@ export class SpeechPage {
   index = 0
   indexMax = this.Questions.length
   Question
-  Image
-  FirstOption
-  SecondOption
-  ThirdOption
-  FourthOption
+  Output
   Correct
-  options
   buttonDisabled = false
-
-  constructor(private router: Router, public alertController: AlertController, private speechRecognition: SpeechRecognition) {
+  isListening: boolean = false;
+  matches: Array<String>;
+  constructor(private router: Router, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone) {
 
   }
 
-  Start(index){
-    this.buttonDisabled = false
-    this.Question     = this.Questions[index].Question
-    this.Correct      = this.Questions[index].true
+  Start(){
+    this.getPermission()
+    if (this.hasPermission())
+    {
+      this.listen()
+    }
   }
 
   ngOnInit(){
-    let options
-    //this.Start(this.index)
-    this.speechRecognition.isRecognitionAvailable().then((available: boolean) => console.log(available))
-
-    // Start the recognition process
-    this.speechRecognition.startListening(options).subscribe(
-      (matches: string[]) => console.log(matches),
-        (onerror) => console.log('error:', onerror)
-      )
-
-    // Stop the recognition process (iOS only)
-    this.speechRecognition.stopListening()
-
-    // Get the list of supported languages
-    this.speechRecognition.getSupportedLanguages().then((languages: string[]) => console.log(languages),(error) => console.log(error))
-
-    // Check permission
-    this.speechRecognition.hasPermission().then((hasPermission: boolean) => console.log(hasPermission))
-
-    // Request permissions
-    this.speechRecognition.requestPermission().then(() => console.log('Granted'),() => console.log('Denied'))
+    this.buttonDisabled = false
+    this.Question     = this.Questions[this.index].Question
+    this.Correct      = this.Questions[this.index].word
   }
 
-  Response(ionicButton){ 
-    this.buttonDisabled = true;
-    if (this.Correct == ionicButton.el.id){
-      ionicButton.color =  'success';
-      this.corrects = this.corrects + 1
-      this.delay(1000).then(any => {
-        ionicButton.color =  'light'; 
-      }); 
-    }else if (this.Correct != ionicButton.el.id){
-      ionicButton.color =  'danger';
-      this.delay(1000).then(any => {
-        ionicButton.color =  'light';
-      }); 
+  async hasPermission():Promise<boolean> {
+    try {
+      const permission = await this.speech.hasPermission();
+      return permission;
+    } catch(e) {
+      console.log(e);
     }
-    this.index = this.index + 1
-    if (this.index < this.indexMax){
-      this.delay(1000).then(any => {
-        this.Start(this.index)
-      }); 
-    }else{
-      this.delay(1000).then(any => {
-        this.presentAlertConfirm()
-      }); 
+  }
+
+  async getPermission():Promise<void> {
+    try {
+      this.speech.requestPermission();
+    } catch(e) {
+      console.log(e);
     }
-    
   }
 
-  async presentAlertConfirm() {
-    const alert = await this.alertController.create({
-      header: 'Parabéns!',
-      animated: true,
-      message: 'Acertaste <strong>' + this.corrects + '/' + this.index + '</strong> perguntas!',
-      buttons: [
-        {
-          text: 'MENU',
-          handler: () => {
-            this.goToHome()
-          }
-        }
-      ]
-    });
+  listen(): void {
+    if (this.isListening) {
+      this.speech.stopListening();
+      this.toggleListenMode();
+      return;
+    }
 
-    await alert.present();
+    this.toggleListenMode();
+    let _this = this;
+
+    this.speech.startListening()
+      .subscribe(matches => {
+        _this.zone.run(() => {
+          _this.matches = matches;
+          this.Output[matches.length] = matches;
+        })
+      }, error => console.error(error));
+
   }
 
-  async delay(ms: number) {
-    await new Promise(resolve => setTimeout(()=>resolve(), ms));
+  toggleListenMode():void {
+    this.isListening = this.isListening ? false : true;
+    console.log('listening mode is now : ' + this.isListening);
   }
 
   goToHome() {

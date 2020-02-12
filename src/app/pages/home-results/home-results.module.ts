@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from "@ngx-translate/core";
-import { PopmenuComponent } from './../../components/popmenu/popmenu.component';
 
 import { HomeResultsPage } from './home-results.page';
 
@@ -26,7 +25,7 @@ const routes: Routes = [
     TranslateModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [HomeResultsPage, PopmenuComponent]
+  declarations: [HomeResultsPage]
 })
 
 

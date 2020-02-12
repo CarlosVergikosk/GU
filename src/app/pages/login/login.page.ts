@@ -58,6 +58,7 @@ export class LoginPage implements OnInit {
   }
 
   async prosesLogin(){
+    console.log("1")
     const loader = await this.loadingCtrl.create({
       duration: 200
     });

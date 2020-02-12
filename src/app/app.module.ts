@@ -41,8 +41,8 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
     StatusBar,
     SplashScreen,
     NativeAudio,
-    PostProvider,
     SpeechRecognition,
+    PostProvider,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

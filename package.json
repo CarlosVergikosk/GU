@@ -38,6 +38,7 @@
     "@ionic/storage": "^2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
+    "browser": "^0.2.6",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
     "cordova": "^9.0.0",
     "cordova-android": "^8.1.0",
@@ -48,6 +49,7 @@
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-local-notification": "^0.9.0-beta.2",
     "cordova-plugin-nativeaudio": "^3.0.9",
+    "cordova-plugin-speechrecognition": "^1.2.0",
     "cordova-res": "^0.8.1",
     "cordova-sqlite-storage": "^4.0.0",
     "cordova-support-google-services": "^1.3.2",
@@ -123,7 +125,8 @@
       "phonegap-plugin-local-notification": {},
       "cordova-plugin-local-notification": {},
       "com.telerik.plugins.nativepagetransitions": {},
-      "cordova-plugin-nativeaudio": {}
+      "cordova-plugin-nativeaudio": {},
+      "cordova-plugin-speechrecognition": {}
     }
   }
 }

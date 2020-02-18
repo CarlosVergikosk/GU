@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
 import { DataService } from 'src/app/data.service.';
 import { PostProvider } from 'src/providers/post-provider';
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

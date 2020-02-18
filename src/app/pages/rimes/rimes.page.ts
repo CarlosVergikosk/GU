@@ -1,6 +1,7 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { Storage } from '@ionic/Storage';
 
 @Component({
   selector: 'app-rimes',
@@ -9,37 +10,10 @@ import { AlertController } from '@ionic/angular';
 })
 
 export class RimesPage {
-  Questions=[
-    
-    { Question: 'Cão rima com: ?',
-      Image: 'assets/Rimes/1.png',
-      Option1: 'Pau',
-      Option2: 'Cima',
-      Option3: 'Au',
-      Option4: 'Pão',
-      true: '4'
-    },
-    { Question: 'Sal rima com: ?',
-      Image: 'assets/Rimes/2.png',
-      Option1: 'Balde',
-      Option2: 'Cal',
-      Option3: 'Sardinha',
-      Option4: 'Sarda',
-      true: '2'
-    },
-    { Question: 'Bola rima com: ?',
-      Image: 'assets/Rimes/3.png',
-      Option1: 'Alguidar',
-      Option2: 'Alma',
-      Option3: 'Sola',
-      Option4: 'Sentar',
-      true: '3' 
-    },
-
-  ]
+  Questions = {}
   corrects = 0
   index = 0
-  indexMax = this.Questions.length
+  indexMax
   Question
   Image
   FirstOption
@@ -49,23 +23,38 @@ export class RimesPage {
   Correct
   buttonDisabled = false
 
-  constructor(private router: Router, public alertController: AlertController) {
+  constructor(private router: Router, public alertController: AlertController, private storage: Storage) {
 
   }
 
+  
+  ngOnInit(){
+    this.loadData()
+  }
+
+  loadData(){ 
+    this.storage.get('session_storage').then((res)=>{
+      let idx = 0
+      for (let i = 0; i < Object.keys(res.questions).length; i++) {
+        if (res.questions[i]['question_category'] == 1) { 
+          this.Questions[idx] = res.questions[i]
+          this.indexMax = idx
+          idx++
+        }
+      }
+      this.Start(0)
+    })
+  }
+  
   Start(index){
     this.buttonDisabled = false
-    this.Question     = this.Questions[index].Question
-    this.Image        = this.Questions[index].Image
-    this.FirstOption  = this.Questions[index].Option1
-    this.SecondOption = this.Questions[index].Option2
-    this.ThirdOption  = this.Questions[index].Option3
-    this.FourthOption = this.Questions[index].Option4
-    this.Correct      = this.Questions[index].true
-  }
-
-  ngOnInit(){
-    this.Start(this.index)
+    this.Question = this.Questions[index]['question_label']
+    this.FirstOption = this.Questions[index]['question_options_1']
+    this.SecondOption = this.Questions[index]['question_options_2']
+    this.ThirdOption = this.Questions[index]['question_options_3']
+    this.FourthOption = this.Questions[index]['question_options_4']
+    this.Correct = this.Questions[index]['question_result']
+    this.Image = this.Questions[index]['question_image']
   }
 
   Response(ionicButton){ 
@@ -74,15 +63,15 @@ export class RimesPage {
       ionicButton.color =  'success';
       this.corrects = this.corrects + 1
       this.delay(1000).then(any => {
-        ionicButton.color =  'light'; 
+        ionicButton.color =  'primary'; 
       }); 
     }else if (this.Correct != ionicButton.el.id){
       ionicButton.color =  'danger';
       this.delay(1000).then(any => {
-        ionicButton.color =  'light';
+        ionicButton.color =  'primary';
       }); 
     }
-    this.index = this.index + 1
+   
     if (this.index < this.indexMax){
       this.delay(1000).then(any => {
         this.Start(this.index)
@@ -92,6 +81,7 @@ export class RimesPage {
         this.presentAlertConfirm()
       }); 
     }
+    this.index = this.index + 1
     
   }
 

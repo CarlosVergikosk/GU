@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import {  NgZone } from '@angular/core';
+import { Storage } from '@ionic/Storage';
 
 @Component({
   selector: 'app-speech',
@@ -11,44 +12,65 @@ import {  NgZone } from '@angular/core';
 })
 
 export class SpeechPage {
-  Questions=[
-    
-    { Question: 'Cão rima com: ?',
-      word: 'Pão'
-    },
-    { Question: 'Sal rima com: ?',
-      word: 'Cal'
-    },
-    { Question: 'Bola rima com: ?',
-      word: 'Bola' 
-    },
-
-  ]
+  Questions = {}
   corrects = 0
   index = 0
-  indexMax = this.Questions.length
+  indexMax = 0
   Question
+  Image
   Output
   Correct
   buttonDisabled = false
   isListening: boolean = false;
   matches: Array<String>;
-  constructor(private router: Router, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone) {
+  constructor(private router: Router, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone, private storage: Storage) {
 
-  }
-
-  Start(){
-    this.getPermission()
-    if (this.hasPermission())
-    {
-      this.listen()
-    }
   }
 
   ngOnInit(){
-    this.buttonDisabled = false
-    this.Question     = this.Questions[this.index].Question
-    this.Correct      = this.Questions[this.index].word
+    this.loadData()
+  }
+
+  loadData(){ 
+    this.storage.get('session_storage').then((res)=>{
+      let idx = 0
+      for (let i = 0; i < Object.keys(res.questions).length; i++) {
+        if (res.questions[i]['question_category'] == 2) { 
+          this.Questions[idx] = res.questions[i]
+          this.indexMax = idx
+          idx++
+        }
+      }
+    })
+    this.Fill()
+  }
+
+  Fill(){ 
+    this.delay(100).then(any => {
+      if (this.index <= this.indexMax) {
+          this.buttonDisabled = false
+          this.Question = this.Questions[this.index]['question_label']
+          this.Correct = this.Questions[this.index]['question_result']
+          this.Image = this.Questions[this.index]['question_image']
+          this.index++
+      }
+      else {
+        this.presentAlertConfirm()
+      }
+    });
+  }
+
+  Start(){
+    this.buttonDisabled = true
+    if (this.hasPermission())
+      {
+        this.listen()
+        this.corrects++
+        this.Fill()
+    } else {
+        this.getPermission()
+        this.Start()
+    }
   }
 
   async hasPermission():Promise<boolean> {
@@ -88,9 +110,31 @@ export class SpeechPage {
 
   }
 
-  toggleListenMode():void {
+  toggleListenMode():void { 
     this.isListening = this.isListening ? false : true;
     console.log('listening mode is now : ' + this.isListening);
+  }
+
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Parabéns!',
+      animated: true,
+      message: 'Acertaste <strong>' + this.corrects + '/' + ( this.index++) + '</strong> perguntas!',
+      buttons: [
+        {
+          text: 'MENU',
+          handler: () => {
+            this.goToHome()
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async delay(ms: number) {
+    await new Promise(resolve => setTimeout(()=>resolve(), ms));
   }
 
   goToHome() {

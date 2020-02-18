@@ -60,12 +60,12 @@ export class RegisterPage implements OnInit {
   }
 
   async prosesRegister(){
-    console.log(this.age)
     let body = {
       username: this.username,
       email: this.email,
       password: this.password,
       age: this.age,
+      language: this.translate.getBrowserLang(),
       aksi: 'register'
     };
     var registersuccess = null;
@@ -73,7 +73,8 @@ export class RegisterPage implements OnInit {
     this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
       var alert = data.msg;
       if(data.success){
-        this.router.navigate(['/']);
+        this.storage.set('session_storage', body)
+        this.goToLogin()
         const toast = await this.toastCtrl.create({
           message: registersuccess,
           animated: true,
@@ -89,14 +90,6 @@ export class RegisterPage implements OnInit {
         toast.present();
       }
     });
-    let dataObj = {
-      "user_id" : null,
-      "email" : this.email,
-      "username" : null,
-      "language" : this.translate.getBrowserLang()
-    }
-    console.log(dataObj)
-    this.storage.set('session_storage', dataObj)
   }
 
   async signUp() {

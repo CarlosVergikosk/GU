@@ -42,8 +42,8 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.onLoginForm = this.formBuilder.group({
-      email: [], password: []
-      /*email: ['', Validators.compose([
+      //email: [], password: []
+      email: ['', Validators.compose([
         Validators.maxLength(70), 
         Validators.pattern('^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$'), 
         Validators.required])
@@ -53,12 +53,11 @@ export class LoginPage implements OnInit {
         Validators.minLength(6), 
         Validators.maxLength(12), 
         Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,12}$')])
-      ],*/
+      ],
     });
   }
 
   async prosesLogin(){
-    console.log("1")
     const loader = await this.loadingCtrl.create({
       duration: 200
     });
@@ -77,7 +76,8 @@ export class LoginPage implements OnInit {
             "user_id" : null,
             "email" : this.email,
             "username" : null,
-            "language" : this.translate.getBrowserLang()
+            "language" : this.translate.getBrowserLang(),
+            "questions" : null
           }
           this.storage.set('session_storage', dataObj);
           this.goToHome()

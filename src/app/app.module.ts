@@ -16,6 +16,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
+import { Network } from '@ionic-native//network/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,6 +44,7 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
     NativeAudio,
     SpeechRecognition,
     PostProvider,
+    Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

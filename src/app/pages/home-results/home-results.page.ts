@@ -5,6 +5,9 @@ import { ImagePage } from './../modal/image/image.page';
 import { DataService } from 'src/app/data.service.';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
+import { PostProvider } from 'src/providers/post-provider';
+
+
 @Component({
   selector: 'app-home-results',
   templateUrl: './home-results.page.html',
@@ -27,27 +30,54 @@ export class HomeResultsPage {
     public activeRoute:ActivatedRoute,
     public toastCtrl: ToastController,
     public dataService:DataService,
-    private storage: Storage
+    private storage: Storage,
+    private postPvdr: PostProvider
   ) {}
 
   ngOnInit() {
+    this.loadData()
   }
 
-  ionRouteDataChanged() {}
+  async loadData() {
+    let Questions = {}
+    let Learning = {}
+    let body = {
+      aksi: 'getQuestions'
+    };
+    await this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+      if(data.success){
+        for (let i = 0; i < data.result.length; i++) {
+          Questions[i] = data.result[i]
+        }    
+      }else{
+       console.log(data.success)
+      }
+    });
 
-  ionViewDidEnter(){
-    this.storage.get('session_storage').then((res)=>{
-      this.id = res.user_id
-      this.email = res.email
-      this.username = res.username
-      this.language = res.language
-      this.Name = res.username
-      this.storage.set('session_storage',res)
+    body = {
+      aksi: 'getLearning'
+    };
+    await this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+      if(data.success){
+        for (let i = 0; i < data.result.length; i++) {
+          Learning[i] = data.result[i]
+        }
+        this.storage.get('session_storage').then((res)=>{
+          res.user_id = res.user_id
+          res.email = res.email
+          res.username = res.username
+          res.language = res.language
+          res.questions = Questions
+          res.learning = Learning
+          console.log(res)
+          this.storage.set('session_storage',res)
+        }) 
+        
+      }else{
+       console.log(data.success)
+      }
     });
   }
-  ionSplitPaneVisible(){}
-
-  ionChange(){}
 
   ionViewWillEnter() {
     this.menuCtrl.enable(true);

@@ -131,6 +131,7 @@ export class SpeechPage {
     });
 
     await alert.present();
+    this.goToHome()
   }
 
   async delay(ms: number) {

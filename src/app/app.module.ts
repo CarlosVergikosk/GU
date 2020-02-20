@@ -17,6 +17,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import { Network } from '@ionic-native//network/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,6 +44,7 @@ import { Network } from '@ionic-native//network/ngx';
     SplashScreen,
     NativeAudio,
     SpeechRecognition,
+    AndroidPermissions,
     PostProvider,
     Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

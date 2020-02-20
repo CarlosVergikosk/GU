@@ -42,45 +42,49 @@ export class HomeResultsPage {
 
   async loadData() {
     this.platform.ready().then(() => {
-      console.log(this.network.type)
-      let Questions = {}
-      let Learning = {}
-      let body = {
-        aksi: 'getQuestions'
-      };
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        if(data.success){
-          for (let i = 0; i < data.result.length; i++) {
-            Questions[i] = data.result[i]
-          }    
-        }else{
-        console.log(data.success)
-        }
-      });
-
-      body = {
-        aksi: 'getLearning'
-      };
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        if(data.success){
-          for (let i = 0; i < data.result.length; i++) {
-            Learning[i] = data.result[i]
+      if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
+        let Questions = {}
+        let Learning = {}
+        let body = {
+          aksi: 'getQuestions'
+        };
+        this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+          if(data.success){
+            for (let i = 0; i < data.result.length; i++) {
+              Questions[i] = data.result[i]
+            }    
+          }else{
+          console.log(data.success)
           }
-          this.storage.get('session_storage').then((res)=>{
-            res.user_id = res.user_id
-            res.email = res.email
-            res.username = res.username
-            res.language = res.language
-            res.questions = Questions
-            res.learning = Learning
-            console.log(res)
-            this.storage.set('session_storage',res)
-          }) 
-          
-        }else{
-        console.log(data.success)
-        }
-      });
+        });
+
+        body = {
+          aksi: 'getLearning'
+        };
+        this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+          if(data.success){
+            for (let i = 0; i < data.result.length; i++) {
+              Learning[i] = data.result[i]
+            }
+            this.storage.get('session_storage').then((res)=>{
+              res.user_id = res.user_id
+              res.email = res.email
+              res.username = res.username
+              res.language = res.language
+              res.questions = Questions
+              res.learning = Learning
+              console.log(res)
+              this.storage.set('session_storage',res)
+            }) 
+            
+          }else{
+          console.log(data.success)
+          }
+        });
+      } else {
+        this.router.navigateByUrl('/');
+        this.presentToast("Serviço Indisponível, tente novamente mais tarde.");
+      }
     }).catch(() => {
       console.log("error")
     });
@@ -108,6 +112,14 @@ export class HomeResultsPage {
       componentProps: { value: image }
     });
     return await modal.present();
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

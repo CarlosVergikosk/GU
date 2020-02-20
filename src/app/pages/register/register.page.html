@@ -1,5 +1,5 @@
-<ion-content padding class="login auth-page">
-
+<ion-content padding class="animated fadeIn login auth-page">
+  <div class="theme-bg"></div>
   <div class="auth-content">
     <!-- Logo -->
     <div padding-horizontal text-center>
@@ -33,12 +33,12 @@
       </ion-item>
     </form>
 
-    <ion-item no-padding class="animated fadeInUp">
-      <ion-label position="floating"  color="light" >
+    <ion-item no-padding class="animated fadeInUp" >
+      <ion-label position="floating">
         <ion-icon name="egg" item-start></ion-icon>
         Data de Nascimento
       </ion-label>
-      <ion-datetime displayFormat="YYYY, MM, DD" color="light" [(ngModel)]="age" value="Selecione a data de "></ion-datetime>
+      <ion-datetime color="secondary"  displayFormat="YYYY, MM, DD" [(ngModel)]="age" value="Selecione a data de "></ion-datetime>
     </ion-item>
 
     <div margin-top>
@@ -71,6 +71,5 @@
         </g>
       </svg>
     </div>
-
   </div>
 </ion-content>

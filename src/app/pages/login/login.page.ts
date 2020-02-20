@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostProvider } from 'src/providers/post-provider';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
-import { NavController, MenuController, ToastController, AlertController, LoadingController} from '@ionic/angular';
+import { NavController, MenuController, ToastController, AlertController, LoadingController, Platform} from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { DataService } from 'src/app/data.service.';
+import { Network } from '@ionic-native/network/ngx';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -25,11 +27,13 @@ export class LoginPage implements OnInit {
     public alertCtrl: AlertController,
     public translate: TranslateService,
     public loadingCtrl: LoadingController,
+    private platform: Platform,
     private statusBar: StatusBar, 
     private formBuilder: FormBuilder,
     private router: Router,
     private postPvdr: PostProvider,
     public dataService:DataService,
+    private network: Network,
   	private storage: Storage
   ) {}
   
@@ -58,48 +62,57 @@ export class LoginPage implements OnInit {
   }
 
   async prosesLogin(){
+   
     const loader = await this.loadingCtrl.create({
       duration: 200
     });
     loader.present();
-    if(this.email != "" && this.password != ""){
-      let body = {
-        email: this.email,
-        password: this.password,
-        aksi: 'login'
-      };
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        var tipo = null;
-        if(data.success){
-          tipo = "success";
-          let dataObj = {
-            "user_id" : null,
-            "email" : this.email,
-            "username" : null,
-            "language" : this.translate.getBrowserLang(),
-            "questions" : null
-          }
-          this.storage.set('session_storage', dataObj);
-          this.goToHome()
-          data.result = null
-        }else{
-          var alertpesan = null;
-          this.translate.get(data.msg).subscribe(
-            value => {
-                alertpesan = value;
+    this.platform.ready().then(() => {
+      if (true) {
+      //if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
+        if(this.email != "" && this.password != ""){
+          let body = {
+            email: this.email,
+            password: this.password,
+            aksi: 'login'
+          };
+          this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+            var tipo = null;
+            if(data.success){
+              tipo = "success";
+              let dataObj = {
+                "user_id" : null,
+                "email" : this.email,
+                "username" : null,
+                "language" : this.translate.getBrowserLang(),
+                "questions" : null
+              }
+              this.storage.set('session_storage', dataObj);
+              this.goToHome()
+              data.result = null
+            }else{
+              var alertpesan = null;
+              this.translate.get(data.msg).subscribe(
+                value => {
+                    alertpesan = value;
+                }
+              )
+              tipo = "danger";
+              const toast = await this.toastCtrl.create({
+                message: alertpesan,
+                color: tipo,
+                duration: 2000
+              });
+              toast.present();
             }
-          )
-          tipo = "danger";
-          const toast = await this.toastCtrl.create({
-            message: alertpesan,
-            color: tipo,
-            duration: 2000
-          });
-    	    toast.present();
-        }
-      });
-    }
+          },error => this.presentToast("Serviço Indisponível, imposssível conectar ao servidor."))}
+      } else {
+        this.presentToast("Serviço Indisponível, tente novamente mais tarde.");
+      }
+    }).catch(() => {});
   }
+
+  
 
   async forgotPass() {
     var header = null;
@@ -160,6 +173,14 @@ export class LoginPage implements OnInit {
 
   goToHome() {
     this.router.navigateByUrl('home-results')  
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

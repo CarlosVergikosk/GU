@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
 import { PostProvider } from 'src/providers/post-provider';
 import { Network } from '@ionic-native/network/ngx';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home-results',
@@ -31,6 +32,7 @@ export class HomeResultsPage {
     public activeRoute:ActivatedRoute,
     public toastCtrl: ToastController,
     public dataService:DataService,
+    public translate: TranslateService,
     private storage: Storage,
     private network: Network,
     private postPvdr: PostProvider
@@ -42,6 +44,7 @@ export class HomeResultsPage {
 
   async loadData() {
     this.platform.ready().then(() => {
+      let alertTitle
       if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
         let Questions = {}
         let Learning = {}
@@ -56,7 +59,16 @@ export class HomeResultsPage {
           }else{
           console.log(data.success)
           }
-        });
+        },error => 
+        {
+          this.translate.get('ERROR.NOSERVER').subscribe(
+            value => {
+              alertTitle = value;
+            }
+          )
+          this.presentToast(alertTitle)
+          return
+        })
 
         body = {
           aksi: 'getLearning'
@@ -73,7 +85,6 @@ export class HomeResultsPage {
               res.language = res.language
               res.questions = Questions
               res.learning = Learning
-              console.log(res)
               this.storage.set('session_storage',res)
             }) 
             
@@ -83,7 +94,12 @@ export class HomeResultsPage {
         });
       } else {
         this.router.navigateByUrl('/');
-        this.presentToast("Serviço Indisponível, tente novamente mais tarde.");
+        this.translate.get('ERROR.NOINTERNET').subscribe(
+          value => {
+            alertTitle = value;
+          }
+        )
+        this.presentToast(alertTitle)
       }
     }).catch(() => {
       console.log("error")

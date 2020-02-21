@@ -2,6 +2,8 @@
   ion-content {
       --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary));
   }
+
+  ion-datetime { color: var(--ion-color-light) !important; }
 }
 
 .paz {

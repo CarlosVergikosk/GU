@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NavController, MenuController, LoadingController } from '@ionic/angular';
+import { NavController, MenuController, LoadingController, Platform } from '@ionic/angular';
 import { PostProvider } from 'src/providers/post-provider';
 import { Storage } from '@ionic/Storage';
 import { ToastController } from '@ionic/angular';
@@ -25,6 +25,7 @@ export class RegisterPage implements OnInit {
     public menuCtrl: MenuController,
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
+    private platform: Platform,
     private network: Network,
     private postPvdr: PostProvider,
     private storage: Storage,
@@ -60,40 +61,56 @@ export class RegisterPage implements OnInit {
   }
 
   async prosesRegister(){
-    if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
-      let body = {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-        age: this.age,
-        language: this.translate.getBrowserLang(),
-        aksi: 'register'
-      };
-      var registersuccess = null;
-      this.translate.get('REGISTER.SUCESSFULL').subscribe(value => {registersuccess = value;}).toString();
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        var alert = data.msg;
-        if(data.success){
-          this.storage.set('session_storage', body)
-          this.goToLogin()
-          const toast = await this.toastCtrl.create({
-            message: registersuccess,
-            animated: true,
-            color: "success",
-            duration: 2000
-          });
-          toast.present();
-        }else{
-          const toast = await this.toastCtrl.create({
-            message: alert,
-            duration: 2000
-          });
-          toast.present();
-        }
-      });
-    } else {
-      this.presentToast("Serviço Indisponível, tente novamente mais tarde.");
-    }
+    this.platform.ready().then(() => {
+      let alertTitle
+      if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
+        let body = {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+          age: this.age,
+          language: this.translate.getBrowserLang(),
+          aksi: 'register'
+        };
+        var registersuccess = null;
+        this.translate.get('REGISTER.SUCESSFULL').subscribe(value => {registersuccess = value;}).toString();
+        this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+          var alert = data.msg;
+          if(data.success){
+            this.storage.set('session_storage', body)
+            this.goToLogin()
+            const toast = await this.toastCtrl.create({
+              message: registersuccess,
+              animated: true,
+              color: "success",
+              duration: 2000
+            });
+            toast.present();
+          }else{
+            const toast = await this.toastCtrl.create({
+              message: alert,
+              duration: 2000
+            });
+            toast.present();
+          }
+        },error => 
+        {
+          this.translate.get('ERROR.NOSERVER').subscribe(
+            value => {
+              alertTitle = value;
+            }
+          )
+          this.presentToast(alertTitle)
+        }) 
+      } else {
+        this.translate.get('ERROR.NOINTERNET').subscribe(
+          value => {
+            alertTitle = value;
+          }
+        )
+        this.presentToast(alertTitle);
+      }
+    }).catch(() => {});
   }
 
   async signUp() {
@@ -118,7 +135,6 @@ export class RegisterPage implements OnInit {
     toast.present();
   }
 
-  // // //
   goToLogin() {
     this.navCtrl.navigateRoot('/');
   }

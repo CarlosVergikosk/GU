@@ -8,7 +8,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { DataService } from 'src/app/data.service.';
 import { Network } from '@ionic-native/network/ngx';
-import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -68,8 +67,9 @@ export class LoginPage implements OnInit {
     });
     loader.present();
     this.platform.ready().then(() => {
-      if (true) {
-      //if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
+      let alertTitle
+      //if (true) {
+      if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
         if(this.email != "" && this.password != ""){
           let body = {
             email: this.email,
@@ -105,9 +105,23 @@ export class LoginPage implements OnInit {
               });
               toast.present();
             }
-          },error => this.presentToast("Serviço Indisponível, imposssível conectar ao servidor."))}
+          },error => 
+          {
+            this.translate.get('ERROR.NOSERVER').subscribe(
+              value => {
+                alertTitle = value;
+              }
+            )
+            this.presentToast(alertTitle)
+          }) 
+        }
       } else {
-        this.presentToast("Serviço Indisponível, tente novamente mais tarde.");
+        this.translate.get('ERROR.NOINTERNET').subscribe(
+          value => {
+            alertTitle = value;
+          }
+        )
+        this.presentToast(alertTitle);
       }
     }).catch(() => {});
   }

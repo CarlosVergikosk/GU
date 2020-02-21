@@ -67,5 +67,10 @@
       "ACCOUNT_UNREGISTED": "Essa conta não existe!",
       "ERRO_OCCURRED": "Desculpe, ocorreu um erro!",
       "PLEASE_WAIT": "Por favor, aguarde.."
+    },
+
+    "ERROR": {
+      "NOSERVER": "Ocorreu um erro, foi impossível comunicar com o servidor. ",
+      "NOINTERNET": "Não foi detectada conexão à internet. "
     }
   }

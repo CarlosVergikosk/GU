@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, NavController } from '@ionic/angular';
+import { Platform, NavController, ToastController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Pages } from './interfaces/pages';
@@ -27,6 +27,7 @@ export class AppComponent {
     private translate: TranslateService,
     private router: Router,
     private storage: Storage,
+    public toastCtrl: ToastController,
     public dataService:DataService,
     public navCtrl: NavController
   ){}
@@ -68,6 +69,7 @@ export class AppComponent {
 
   ngOnInit(){
     this.platform.ready().then(() => {
+      let alertTitle
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.storage.get('session_storage').then((res)=>{
@@ -75,25 +77,51 @@ export class AppComponent {
           this.router.navigate(['/']);
           this.userLang = this.translate.getBrowserLang()
         }else{
-          this.userLang = res.language
-          let body = {
-            username: null,
-            email: res.email,
-            password: null,
-            aksi: 'getData'
-          };
-          this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-            if(data.success){
-              let dataObj = {
-                "user_id" : data.result.user_id,
-                "email" : data.result.email,
-                "username" : data.result.username,
-                "language" : this.userLang
-              }
-              this.storage.set('session_storage', dataObj)
+          if (res) {
+            if (res.username && res.email) {
+              this.userLang = res.language
+              let body = {
+                username: res.username,
+                email: res.email,
+                password: null,
+                aksi: 'getData'
+              };
+              this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+                if(data.success){
+                    res.user_id = data.result.user_id,
+                    res.email = data.result.email,
+                    res.username = data.result.username,
+                    res.language = this.userLang
+                  this.storage.set('session_storage', res)
+                }
+              }, error => {
+                this.translate.get('ERROR.NOSERVER').subscribe(
+                  value => {
+                    alertTitle = value;
+                  }
+                )
+                this.presentToast(alertTitle);
+                this.router.navigate(['/']);
+              });
+              this.router.navigate(['/home-results']);
+            } else {
+              this.translate.get('ERROR.NODATA').subscribe(
+                value => {
+                  alertTitle = value;
+                }
+              )
+              this.presentToast(alertTitle);
+              this.router.navigate(['/']);
             }
-          });
-          this.router.navigate(['/home-results']);
+          } else {
+            this.translate.get('ERROR.NOSERVER').subscribe(
+              value => {
+                alertTitle = value;
+              }
+            )
+            this.presentToast(alertTitle);
+            this.router.navigate(['/']);
+          }
         }
         this.initTranslate(this.userLang)
       });
@@ -102,6 +130,14 @@ export class AppComponent {
 
   ngOnDestroy(){
     this.Name= ""
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

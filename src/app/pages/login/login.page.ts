@@ -80,7 +80,8 @@ export class LoginPage implements OnInit {
               "email" : this.email,
               "username" : null,
               "language" : this.translate.getBrowserLang(),
-              "questions" : null
+              "questions" : null,
+              "learning" : null
             }
             this.storage.set('session_storage', dataObj);
             this.loadingService.loadingDismiss(); 

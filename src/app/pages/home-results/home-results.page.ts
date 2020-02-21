@@ -57,15 +57,6 @@ export class HomeResultsPage {
           for (let i = 0; i < data.result.length; i++) {
             Questions[i] = data.result[i]
           }
-          this.storage.get('session_storage').then((res)=>{
-            res.user_id = res.user_id
-            res.email = res.email
-            res.username = res.username
-            res.language = res.language
-            res.questions = Questions
-            res.learning = res.learning
-            this.storage.set('session_storage',res)
-          })
         }
       },error => 
       {

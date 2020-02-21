@@ -81,7 +81,6 @@ export class EditProfilePage implements OnInit {
             res.language = res.language
             res.questions = res.questions
             res.learning = res.learning
-            res.offline = res.offline
             this.storage.set('session_storage',res)
           })
           this.translate.get('EDIT.DATA_SAVED').subscribe(

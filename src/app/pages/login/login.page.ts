@@ -8,7 +8,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { DataService } from 'src/app/data.service.';
 import { LoadingService } from 'src/app/services/loading.service';
-import { Network } from '@ionic-native/network/ngx';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +33,6 @@ export class LoginPage implements OnInit {
     private router: Router,
     private postPvdr: PostProvider,
     public dataService:DataService,
-    private network: Network,
   	private storage: Storage
   ) {}
   
@@ -65,8 +63,8 @@ export class LoginPage implements OnInit {
   async prosesLogin(){
     this.platform.ready().then(() => {
       let alertTitle
-      if(true) {
-      //if(this.email != "" && this.password != ""){
+      //if(true) {
+      if(this.email != "" && this.password != ""){
         let body = {
           email: this.email,
           password: this.password,
@@ -82,8 +80,7 @@ export class LoginPage implements OnInit {
               "email" : this.email,
               "username" : null,
               "language" : this.translate.getBrowserLang(),
-              "questions" : null,
-              "offline" : false
+              "questions" : null
             }
             this.storage.set('session_storage', dataObj);
             this.loadingService.loadingDismiss(); 
@@ -107,33 +104,43 @@ export class LoginPage implements OnInit {
           }
         },error => 
         {
-          this.translate.get('ERROR.NOSERVER').subscribe(
-            value => {
-              alertTitle = value;
-            }
-          )
-          this.presentToast(alertTitle)
           this.storage.get('session_storage').then((res)=>{
-            if (res.email) {
-              res.user_id = res.user_id
-              res.email = res.email
-              res.username = res.username
-              res.language = res.language
-              res.questions = res.questions
-              res.learning = res.learning
-              res.offline = "true"
-              this.storage.set('session_storage',res)
-            }else {
+            if ( res ) {
+              if (res.email && res.username) {
+                res.user_id = res.user_id
+                res.email = res.email
+                res.username = res.username
+                res.language = res.language
+                res.questions = res.questions
+                res.learning = res.learning
+                this.storage.set('session_storage',res)
+                this.translate.get('ERROR.NOSERVER').subscribe(
+                  value => {
+                    alertTitle = value;
+                  }
+                )
+                this.loadingService.loadingDismiss(); 
+                this.presentToast(alertTitle);
+                this.goToHome()
+              } else {
+                this.translate.get('ERROR.NODATA').subscribe(
+                  value => {
+                    alertTitle = value;
+                  }
+                )
+                this.loadingService.loadingDismiss(); 
+                this.presentToast(alertTitle);
+              }
+            } else {
               this.translate.get('ERROR.NODATA').subscribe(
                 value => {
                   alertTitle = value;
                 }
               )
+              this.loadingService.loadingDismiss(); 
               this.presentToast(alertTitle);
-              this.goToHome()
-            } 
+            }
           })
-          this.loadingService.loadingDismiss();
         })
       }
     }).catch(() => {});

@@ -48,48 +48,55 @@ export class HomeResultsPage {
       let alertTitle
       let Questions = {}
       let Learning = {}
+      this.loadingService.loadingPresent();
       let body = {
         aksi: 'getQuestions'
       };
-      this.loadingService.loadingPresent();
       this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
         if(data.success){
           for (let i = 0; i < data.result.length; i++) {
             Questions[i] = data.result[i]
-          }    
-        }else{
-        console.log(data.success)
+          }
+          this.storage.get('session_storage').then((res)=>{
+            res.user_id = res.user_id
+            res.email = res.email
+            res.username = res.username
+            res.language = res.language
+            res.questions = Questions
+            res.learning = res.learning
+            this.storage.set('session_storage',res)
+          })
         }
-        this.loadingService.loadingDismiss(); 
       },error => 
       {
-        this.translate.get('ERROR.NOSERVER').subscribe(
-          value => {
-            alertTitle = value;
-          }
-        )
-        this.presentToast(alertTitle)
         this.storage.get('session_storage').then((res)=>{
-          if (res.email) {
+          if (res.email && res.username && res.questions && res.learning && res.language) {
             res.user_id = res.user_id
             res.email = res.email
             res.username = res.username
             res.language = res.language
             res.questions = res.questions
             res.learning = res.learning
-            res.offline = "true"
             this.storage.set('session_storage',res)
-          }else {
-            this.translate.get('ERROR.NODATA').subscribe(
+            this.translate.get('ERROR.NOSERVER').subscribe(
               value => {
                 alertTitle = value;
               }
             )
-            this.presentToast(alertTitle);
+            this.loadingService.loadingDismiss();
+            this.presentToast(alertTitle)
+            return
+          }else {
+            this.translate.get('ERROR.NOSERVER').subscribe(
+              value => {
+                alertTitle = value;
+              }
+            )
+            this.loadingService.loadingDismiss();
+            this.presentToast(alertTitle)
             this.router.navigateByUrl('/');
           }
         })
-        this.loadingService.loadingDismiss(); 
       })
       body = {
         aksi: 'getLearning'
@@ -106,12 +113,9 @@ export class HomeResultsPage {
             res.language = res.language
             res.questions = Questions
             res.learning = Learning
-            res.offline = res.offline
             this.storage.set('session_storage',res)
-          }) 
-          
-        }else{
-        console.log(data.success)
+          })
+          this.loadingService.loadingDismiss();
         }
       });
     }).catch(() => {

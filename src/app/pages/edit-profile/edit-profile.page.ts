@@ -38,7 +38,7 @@ export class EditProfilePage implements OnInit {
   ionViewWillEnter() {
     let alertTitle
     this.storage.get('session_storage').then((res)=>{
-      if (res.email) {
+      if (res.email && res.username) {
         this.id = res.user_id
         this.email = res.email
         this.username = res.username

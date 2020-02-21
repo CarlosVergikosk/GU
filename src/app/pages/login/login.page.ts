@@ -7,6 +7,7 @@ import { NavController, MenuController, ToastController, AlertController, Loadin
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { DataService } from 'src/app/data.service.';
+import { LoadingService } from 'src/app/services/loading.service';
 import { Network } from '@ionic-native/network/ngx';
 
 @Component({
@@ -28,6 +29,7 @@ export class LoginPage implements OnInit {
     public loadingCtrl: LoadingController,
     private platform: Platform,
     private statusBar: StatusBar, 
+    public loadingService: LoadingService,
     private formBuilder: FormBuilder,
     private router: Router,
     private postPvdr: PostProvider,
@@ -61,67 +63,78 @@ export class LoginPage implements OnInit {
   }
 
   async prosesLogin(){
-   
-    const loader = await this.loadingCtrl.create({
-      duration: 200
-    });
-    loader.present();
     this.platform.ready().then(() => {
       let alertTitle
-      //if (true) {
-      if ( this.network.type != this.network.Connection.NONE && this.network.type != this.network.Connection.UNKNOWN && this.network.type != null) {
-        if(this.email != "" && this.password != ""){
-          let body = {
-            email: this.email,
-            password: this.password,
-            aksi: 'login'
-          };
-          this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-            var tipo = null;
-            if(data.success){
-              tipo = "success";
-              let dataObj = {
-                "user_id" : null,
-                "email" : this.email,
-                "username" : null,
-                "language" : this.translate.getBrowserLang(),
-                "questions" : null
-              }
-              this.storage.set('session_storage', dataObj);
-              this.goToHome()
-              data.result = null
-            }else{
-              var alertpesan = null;
-              this.translate.get(data.msg).subscribe(
-                value => {
-                    alertpesan = value;
-                }
-              )
-              tipo = "danger";
-              const toast = await this.toastCtrl.create({
-                message: alertpesan,
-                color: tipo,
-                duration: 2000
-              });
-              toast.present();
+      if(true) {
+      //if(this.email != "" && this.password != ""){
+        let body = {
+          email: this.email,
+          password: this.password,
+          aksi: 'login'
+        };
+        this.loadingService.loadingPresent();
+        this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+          var tipo = null;
+          if(data.success){
+            tipo = "success";
+            let dataObj = {
+              "user_id" : null,
+              "email" : this.email,
+              "username" : null,
+              "language" : this.translate.getBrowserLang(),
+              "questions" : null,
+              "offline" : false
             }
-          },error => 
-          {
-            this.translate.get('ERROR.NOSERVER').subscribe(
+            this.storage.set('session_storage', dataObj);
+            this.loadingService.loadingDismiss(); 
+            this.goToHome()
+            data.result = null
+          }else{
+            var alertpesan = null;
+            this.translate.get(data.msg).subscribe(
               value => {
-                alertTitle = value;
+                  alertpesan = value;
               }
             )
-            this.presentToast(alertTitle)
-          }) 
-        }
-      } else {
-        this.translate.get('ERROR.NOINTERNET').subscribe(
-          value => {
-            alertTitle = value;
+            tipo = "danger";
+            const toast = await this.toastCtrl.create({
+              message: alertpesan,
+              color: tipo,
+              duration: 2000
+            });
+            this.loadingService.loadingDismiss(); 
+            toast.present();
           }
-        )
-        this.presentToast(alertTitle);
+        },error => 
+        {
+          this.translate.get('ERROR.NOSERVER').subscribe(
+            value => {
+              alertTitle = value;
+            }
+          )
+          this.presentToast(alertTitle)
+          this.storage.get('session_storage').then((res)=>{
+            if (res.email) {
+              res.user_id = res.user_id
+              res.email = res.email
+              res.username = res.username
+              res.language = res.language
+              res.questions = res.questions
+              res.learning = res.learning
+              res.offline = "true"
+              this.storage.set('session_storage',res)
+            }else {
+              this.translate.get('ERROR.NODATA').subscribe(
+                value => {
+                  alertTitle = value;
+                }
+              )
+              this.presentToast(alertTitle);
+              this.goToHome()
+            } 
+          })
+          this.loadingService.loadingDismiss();
+        })
       }
     }).catch(() => {});
   }

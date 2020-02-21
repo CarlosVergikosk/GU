@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import {  NgZone } from '@angular/core';
 import { Storage } from '@ionic/Storage';
@@ -23,12 +23,14 @@ export class SpeechPage {
   buttonDisabled = false
   isListening: boolean = false;
   matches: Array<String>;
-  constructor(private router: Router, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone, private storage: Storage) {
+  constructor(private router: Router, private platform: Platform, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone, private storage: Storage) {
 
   }
 
-  ngOnInit(){
-    this.loadData()
+  ionViewWillEnter(){
+    this.platform.ready().then(() => {
+      this.loadData()
+    }).catch(() => {});
   }
 
   loadData(){ 
@@ -41,23 +43,21 @@ export class SpeechPage {
           idx++
         }
       }
+      this.Fill()
     })
-    this.Fill()
   }
 
   Fill(){ 
-    this.delay(100).then(any => {
-      if (this.index <= this.indexMax) {
-          this.buttonDisabled = false
-          this.Question = this.Questions[this.index]['question_label']
-          this.Correct = this.Questions[this.index]['question_result']
-          this.Image = this.Questions[this.index]['question_image']
-          this.index++
-      }
-      else {
-        this.presentAlertConfirm()
-      }
-    });
+    if (this.index <= this.indexMax) {
+      this.buttonDisabled = false
+      this.Question = this.Questions[this.index]['question_label']
+      this.Correct = this.Questions[this.index]['question_result']
+      this.Image = this.Questions[this.index]['question_image']
+      this.index++
+    }
+    else {
+      this.presentAlertConfirm()
+    }
   }
 
   Start(){

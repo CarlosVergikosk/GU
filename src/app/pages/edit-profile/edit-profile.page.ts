@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, LoadingController, ToastController, NavParams } from '@ionic/angular';
+import { NavController, ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { PostProvider } from 'src/providers/post-provider';
 import { Storage } from '@ionic/Storage';
 import { DataService } from 'src/app/data.service.';
 import { TranslateService } from "@ngx-translate/core";
+import { LoadingService } from 'src/app/services/loading.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-profile',
@@ -23,37 +25,33 @@ export class EditProfilePage implements OnInit {
     private postPvdr: PostProvider,
     private storage: Storage,
     private translate: TranslateService,
-    public dataService:DataService
+    private router: Router,
+    public dataService:DataService,
+    public alertCtrl: AlertController,
+    public loadingService: LoadingService
+    
   ){}
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
+    let alertTitle
     this.storage.get('session_storage').then((res)=>{
-      let body = {
-        username: null,
-        email: res.email,
-        password: null,
-        aksi: 'getData'
-      };
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        if(data.success){
-          this.id = data.result.user_id 
-          this.email = data.result.email
-          this.username = data.result.username
-          let dataObj = {
-            "user_id" : this.id,
-            "email" : this.email,
-            "username" : this.username,
-            "language" : res.lang
+      if (res.email) {
+        this.id = res.user_id
+        this.email = res.email
+        this.username = res.username
+      } else {
+        this.translate.get('ERROR.NOSERVER').subscribe(
+          value => {
+            alertTitle = value;
           }
-          this.dataService.setParamData(dataObj)
-        }
-      });
-      console.log(body)
-      this.storage.set('session_storage',res)
-    });
+        )
+        this.presentToast(alertTitle);
+        this.navCtrl.navigateForward('/home-results');
+      }
+    })
   }
 
   ngOnDestroy(){
@@ -63,73 +61,71 @@ export class EditProfilePage implements OnInit {
   }
 
   async sendData() {
-    let body = {
-      user_id: this.id,
-      username: this.username,
-      email: this.email,
-      password: null,
-      aksi: 'update'
-    };
-    this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-      var tipo = null;
-      if(data.success){
-        //IF CHANGED
-        //LOADER
-        const loader = await this.loadingCtrl.create({
-          duration: 200
-        });
-        loader.present();
-        loader.onWillDismiss().then(async l => {
-          //AFTER LOADER DISMISS
-          tipo = "success";
-          var alerta = "EDIT.DATA_SAVED"
-          this.translate.get(alerta).subscribe(
-            value => {
-              alerta = value;
-            }
-          )
-          const toast = await this.toastCtrl.create({
-            message: alerta,
-            color: tipo,
-            duration: 2000
-          });
-          toast.present();
-          //PASSING DATA
-          this.email = this.email
-          this.username = this.username
+    let alertTitle
+    if (this.email != "" && this.username != "") {
+      
+      let body = {
+        user_id: this.id,
+        username: this.username,
+        email: this.email,
+        password: null,
+        aksi: 'update'
+      };
+      this.loadingService.loadingPresent();
+      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+        if(data.success){
           this.storage.get('session_storage').then((res)=>{
-            this.email = res.email
-            this.username = res.username
-            let dataObj = {
-              "user_id" : res.id,
-              "email" : this.email,
-              "username" : this.username,
-              "language" : res.lang
-            }
-            this.storage.set('session_storage', dataObj);
-          });
-          //GO HOME
-          this.navCtrl.navigateForward('/home-results');
-        });
-      }else{
-        //IF NOT CHANGED
-        //NOTIFY
-        tipo = "danger";
-        var alerta = "EDIT.DATA_NOTSAVED"
-          this.translate.get(alerta).subscribe(
+            res.user_id = res.user_id
+            res.email =  this.email
+            res.username =  this.username
+            res.language = res.language
+            res.questions = res.questions
+            res.learning = res.learning
+            res.offline = res.offline
+            this.storage.set('session_storage',res)
+          })
+          this.translate.get('EDIT.DATA_SAVED').subscribe(
             value => {
-              alerta = value;
+              alertTitle = value;
             }
           )
-        const toast = await this.toastCtrl.create({
-          message: alerta,
-          color: tipo,
-          duration: 2000
-        });
-        toast.present();
-      }
-    })
-    console.log(body)
-    body = null;
+          this.presentToast(alertTitle);
+          this.navCtrl.navigateForward('/home-results');
+        }else{
+          this.translate.get('EDIT.DATA_NOTSAVED').subscribe(
+            value => {
+              alertTitle = value;
+            }
+          )
+          this.presentToast(alertTitle);
+        }
+        this.loadingService.loadingDismiss()
+      },error => 
+      {
+        this.translate.get('ERROR.NOSERVER').subscribe(
+          value => {
+            alertTitle = value;
+          }
+        )
+        this.presentToast(alertTitle);
+        this.loadingService.loadingDismiss()
+        this.navCtrl.navigateForward('/home-results');
+      })
+    } else {
+      this.translate.get('ERROR.INVALIDFIELDS').subscribe(
+        value => {
+          alertTitle = value;
+        }
+      )
+      this.presentToast(alertTitle);
+    }
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 }

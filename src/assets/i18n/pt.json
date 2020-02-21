@@ -71,6 +71,8 @@
 
     "ERROR": {
       "NOSERVER": "Ocorreu um erro, foi impossível comunicar com o servidor. ",
-      "NOINTERNET": "Não foi detectada conexão à internet. "
+      "NOINTERNET": "Não foi detectada conexão à internet. ",
+      "NODATA": "Não foi possível carregar os seus dados locais.",
+      "INVALIDFIELDS": "Preencha todos os campos."
     }
   }

@@ -1,11 +1,9 @@
-@media (prefers-color-scheme: dark) {
-  :host {
+:host {
 
-    ion-list {
-        &.list-md {
-            padding: 0;
-        }
-    }
+  ion-list {
+      &.list-md {
+          padding: 0;
+      }
   }
 }
 

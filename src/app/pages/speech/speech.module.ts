@@ -5,7 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { SpeechPage } from 'src/app/pages/speech/speech.page';
 import { TranslateModule } from "@ngx-translate/core";
-import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 
 const routes: Routes = [
   {
@@ -20,7 +19,6 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     TranslateModule,
-    SpeechRecognition,
     RouterModule.forChild(routes)
   ],
   providers: [],

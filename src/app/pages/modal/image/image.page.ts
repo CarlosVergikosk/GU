@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NavController, ModalController } from '@ionic/angular';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ModalController } from '@ionic/angular';
+import { Learning } from 'src/app/interfaces/pages';
+import { Storage } from '@ionic/Storage';
 
 @Component({
   selector: 'app-image',
@@ -10,15 +11,20 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class ImagePage implements OnInit {
   @Input() value: any;
   public image: any;
-
+  public appLearning: Array<Learning>;
   constructor(
-    private nav: NavController,
     private modalCtrl: ModalController,
-    private sanitizer: DomSanitizer
+    private storage: Storage
   ) {}
 
   ngOnInit() {
     //this.image = this.sanitizer.bypassSecurityTrustStyle(this.value);
+    this.storage.get('session_storage').then((res)=>{
+      this.appLearning = [{ header: res.learning[0].page_header, text: res.learning[0].page_text, image: res.learning[0].page_image}]
+      for (let i = 1; i < Object.keys(res.learning).length; i++) {
+        this.appLearning.push({ header: res.learning[i].page_header, text: res.learning[i].page_text, image: res.learning[i].page_image})
+      }
+    })
   }
 
   closeModal() {

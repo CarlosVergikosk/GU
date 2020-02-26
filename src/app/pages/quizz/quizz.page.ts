@@ -2,6 +2,7 @@ import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
+import { Storage } from '@ionic/Storage';
 
 @Component({
   selector: 'app-quiz',
@@ -10,40 +11,10 @@ import { NativeAudio } from '@ionic-native/native-audio/ngx';
 })
 
 export class QuizPage {
-  Questions=[
-    
-    { Question: 'Como se chama este animal ?',
-      Image: 'assets/Questions/1.png',
-      Audio: 'assets/Audio/sound.mp3',
-      Option1: 'Cão',
-      Option2: 'Coelho',
-      Option3: 'Tartaruga',
-      Option4: 'Lagarto',
-      true: '1'
-    },
-    { Question: 'Como se chama este animal ?',
-      Image: 'assets/Questions/2.png',
-      uniqueIdAudio: 'assets/Audio/sound.mp3',
-      Option1: 'Leão',
-      Option2: 'Águia',
-      Option3: 'Dragão',
-      Option4: 'Peixe',
-      true: '2'
-    },
-    { Question: 'Como se chama este animal ?',
-      Image: 'assets/Questions/3.png',
-      uniqueIdAudio: 'assets/Audio/sound.mp3',
-      Option1: 'Golfinho',
-      Option2: 'Girafa',
-      Option3: 'Águia',
-      Option4: 'Leão',
-      true: '4' 
-    },
-
-  ]
+  Questions = {}
   corrects = 0
   index = 0
-  indexMax = this.Questions.length
+  indexMax
   Question
   Image
   FirstOption
@@ -52,24 +23,39 @@ export class QuizPage {
   FourthOption
   Correct
   buttonDisabled = false
-  constructor(private router: Router, public alertController: AlertController, private nativeAudio: NativeAudio) {
+  constructor(private router: Router, public alertController: AlertController, private nativeAudio: NativeAudio, private storage: Storage) {
 
-  }
-
-  Start(index){
-    this.buttonDisabled = false
-    this.nativeAudio.preloadSimple('uniqueId', 'assets/Audio/sound.mp3')
-    this.Question     = this.Questions[index].Question
-    this.Image        = this.Questions[index].Image
-    this.FirstOption  = this.Questions[index].Option1
-    this.SecondOption = this.Questions[index].Option2
-    this.ThirdOption  = this.Questions[index].Option3
-    this.FourthOption = this.Questions[index].Option4
-    this.Correct      = this.Questions[index].true
   }
 
   ngOnInit(){
-    this.Start(this.index)
+    this.loadData()
+  }
+
+  loadData(){ 
+    this.storage.get('session_storage').then((res)=>{
+      let idx = 0
+      for (let i = 0; i < Object.keys(res.questions).length; i++) {
+        if (res.questions[i]['question_category'] == 3) { 
+          this.Questions[idx] = res.questions[i]
+          this.indexMax = idx
+          idx++
+        }
+      }
+      this.Start(0)
+    })
+    
+  }
+  
+  Start(index){
+    this.buttonDisabled = false
+    this.Question = this.Questions[index]['question_label']
+    this.FirstOption = this.Questions[index]['question_options_1']
+    this.SecondOption = this.Questions[index]['question_options_2']
+    this.ThirdOption = this.Questions[index]['question_options_3']
+    this.FourthOption = this.Questions[index]['question_options_4']
+    this.Correct = this.Questions[index]['question_result']
+    this.Image = this.Questions[index]['question_image']
+    this.nativeAudio.preloadSimple('uniqueId', this.Questions[index]['question_audio'])
   }
 
   Play(){
@@ -90,7 +76,6 @@ export class QuizPage {
         ionicButton.color =  'primary';
       }); 
     }
-    this.index = this.index + 1
     if (this.index < this.indexMax){
       this.delay(1000).then(any => {
         this.Start(this.index)
@@ -100,7 +85,7 @@ export class QuizPage {
         this.presentAlertConfirm()
       }); 
     }
-    
+    this.index = this.index + 1
   }
   
   async presentAlertConfirm() {

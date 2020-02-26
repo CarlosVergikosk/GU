@@ -1,21 +1,20 @@
 :host {
   ion-content {
-    --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary))
+      --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary));
   }
 
-  datetime-md .datetime-placeholder {
-    color: #999; 
-  }
+  ion-datetime { color: var(--ion-color-light) !important; }
+}
 
-  datetime-md {
-    color: #fff; 
-  }
+.paz {
+  position: relative;
+  z-index: 10;
 }
 
 .p {
   color: var(--ion-color-primary);
 }
-  
+
 .flex { /*Flexbox for containers*/
   display: flex;
   justify-content: center;
@@ -29,7 +28,7 @@
   left: 0;
   width: 190%;
   height:15vh;
-  margin-bottom:-7px; /*Fix for safari gap*/
+  margin-bottom:0px; /*Fix for safari gap*/
   min-height:100px;
   max-height:150px;
 }
@@ -39,6 +38,7 @@
   height:20vh;
   text-align:center;
   background-color: white;
+  padding-bottom: 0 !important;
 }
 
 /* Animation */

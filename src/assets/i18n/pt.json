@@ -42,7 +42,7 @@
       "LEARN": "Aprendizagem",
       "SPEECHQUIZZ": "Quizz Voz",
       "RIMESQUIZZ": "Quizz Rimas",
-      "ANIMALSQUIZZ": "Quizz Animais"
+      "SYLLABLEQUIZZ": "Quizz Sílabas"
     },
 
     "APP": {
@@ -67,5 +67,12 @@
       "ACCOUNT_UNREGISTED": "Essa conta não existe!",
       "ERRO_OCCURRED": "Desculpe, ocorreu um erro!",
       "PLEASE_WAIT": "Por favor, aguarde.."
+    },
+
+    "ERROR": {
+      "NOSERVER": "Ocorreu um erro, foi impossível comunicar com o servidor. ",
+      "NOINTERNET": "Não foi detectada conexão à internet. ",
+      "NODATA": "Não foi possível carregar os seus dados locais.",
+      "INVALIDFIELDS": "Preencha todos os campos."
     }
   }

@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostProvider } from 'src/providers/post-provider';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
-import { NavController, MenuController, ToastController, AlertController, LoadingController} from '@ionic/angular';
+import { NavController, MenuController, ToastController, AlertController, LoadingController, Platform} from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { DataService } from 'src/app/data.service.';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -25,19 +26,19 @@ export class LoginPage implements OnInit {
     public alertCtrl: AlertController,
     public translate: TranslateService,
     public loadingCtrl: LoadingController,
-    private statusBar: StatusBar, 
+    public loadingService: LoadingService,
+    private storage: Storage,
     private formBuilder: FormBuilder,
     private router: Router,
+    private platform: Platform,
+    private statusBar: StatusBar, 
     private postPvdr: PostProvider,
-    public dataService:DataService,
-  	private storage: Storage
+    public dataService:DataService
   ) {}
   
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
     this.statusBar.hide();
-    this.storage.clear();
-    console.log("clear")
   }
 
   ngOnInit() {
@@ -57,48 +58,99 @@ export class LoginPage implements OnInit {
     });
   }
 
-  async prosesLogin(){
-    const loader = await this.loadingCtrl.create({
-      duration: 200
-    });
-    loader.present();
-    if(this.email != "" && this.password != ""){
-      let body = {
-        email: this.email,
-        password: this.password,
-        aksi: 'login'
-      };
-      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-        var tipo = null;
-        if(data.success){
-          tipo = "success";
-          let dataObj = {
-            "user_id" : null,
-            "email" : this.email,
-            "username" : null,
-            "language" : this.translate.getBrowserLang()
-          }
-          this.storage.set('session_storage', dataObj);
-          this.goToHome()
-          data.result = null
-        }else{
-          var alertpesan = null;
-          this.translate.get(data.msg).subscribe(
-            value => {
-                alertpesan = value;
-            }
-          )
-          tipo = "danger";
-          const toast = await this.toastCtrl.create({
-            message: alertpesan,
-            color: tipo,
-            duration: 2000
-          });
-    	    toast.present();
-        }
-      });
-    }
+  ionViewWillLeave() {
+    this.email = null
+    this.password = null
   }
+
+  async prosesLogin(){
+    this.platform.ready().then(() => {
+      let alertTitle
+      //if(true) {
+      if(this.email != "" && this.password != ""){
+        let body = {
+          email: this.email,
+          password: this.password,
+          aksi: 'login'
+        };
+        this.loadingService.loadingPresent();
+        this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+          var tipo = null;
+          if(data.success){
+            tipo = "success";
+            let dataObj = { 
+              "user_id" : null,
+              "email" : this.email,
+              "username" : data.result.username,
+              "language" : this.translate.getBrowserLang(),
+              "questions" : null,
+              "learning" : null
+            }
+            this.storage.set('session_storage', dataObj);
+            this.loadingService.loadingDismiss(); 
+            this.goToHome()
+            data.result = null
+          }else{
+            var alertpesan = null;
+            this.translate.get(data.msg).subscribe(
+              value => {
+                  alertpesan = value;
+              }
+            )
+            tipo = "danger";
+            const toast = await this.toastCtrl.create({
+              message: alertpesan,
+              color: tipo,
+              duration: 2000
+            });
+            this.loadingService.loadingDismiss(); 
+            toast.present();
+          }
+        },error => 
+        {
+          this.storage.get('session_storage').then((res)=>{
+            if ( res ) {
+              if (res.email && res.username) {
+                res.user_id = res.user_id
+                res.email = res.email
+                res.username = res.username
+                res.language = res.language
+                res.questions = res.questions
+                res.learning = res.learning
+                this.storage.set('session_storage',res)
+                this.translate.get('ERROR.NOSERVER').subscribe(
+                  value => {
+                    alertTitle = value;
+                  }
+                )
+                this.loadingService.loadingDismiss(); 
+                this.presentToast(alertTitle);
+                this.goToHome()
+              } else {
+                this.translate.get('ERROR.NODATA').subscribe(
+                  value => {
+                    alertTitle = value;
+                  }
+                )
+                this.loadingService.loadingDismiss(); 
+                this.presentToast(alertTitle);
+              }
+            } else {
+              this.translate.get('ERROR.NODATA').subscribe(
+                value => {
+                  alertTitle = value;
+                }
+              )
+              this.loadingService.loadingDismiss(); 
+              this.presentToast(alertTitle);
+            }
+          })
+        })
+      }
+    }).catch(() => {});
+  }
+
+  
 
   async forgotPass() {
     var header = null;
@@ -159,6 +211,14 @@ export class LoginPage implements OnInit {
 
   goToHome() {
     this.router.navigateByUrl('home-results')  
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

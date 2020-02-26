@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import {NavController,AlertController,MenuController,ToastController,PopoverController,ModalController } from '@ionic/angular';
+import { NavController,AlertController,MenuController,ToastController,PopoverController,ModalController,Platform,LoadingController } from '@ionic/angular';
 import { ActivatedRoute }  from '@angular/router';
 import { ImagePage } from './../modal/image/image.page';
 import { DataService } from 'src/app/data.service.';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
+import { PostProvider } from 'src/providers/post-provider';
+import { TranslateService } from '@ngx-translate/core';
+import { LoadingService } from 'src/app/services/loading.service';
+
 @Component({
   selector: 'app-home-results',
   templateUrl: './home-results.page.html',
@@ -22,32 +26,92 @@ export class HomeResultsPage {
     public menuCtrl: MenuController,
     public popoverCtrl: PopoverController,
     public alertCtrl: AlertController,
-    private router: Router,
+    public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
     public activeRoute:ActivatedRoute,
+    public loadingService: LoadingService,
     public toastCtrl: ToastController,
     public dataService:DataService,
-    private storage: Storage
+    public translate: TranslateService,
+    private router: Router,
+    private platform: Platform,
+    private storage: Storage,
+    private postPvdr: PostProvider
   ) {}
 
   ngOnInit() {
+    this.loadData()
   }
 
-  ionRouteDataChanged() {}
-
-  ionViewDidEnter(){
-    this.storage.get('session_storage').then((res)=>{
-      this.id = res.user_id
-      this.email = res.email
-      this.username = res.username
-      this.language = res.language
-      this.Name = res.username
-      this.storage.set('session_storage',res)
+  async loadData() {
+    this.platform.ready().then(() => {
+      let alertTitle
+      let Questions = {}
+      let Learning = {}
+      this.loadingService.loadingPresent();
+      let body = {
+        aksi: 'getQuestions'
+      };
+      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+        if(data.success){
+          for (let i = 0; i < data.result.length; i++) {
+            Questions[i] = data.result[i]
+          }
+        }
+      },error => 
+      {
+        this.storage.get('session_storage').then((res)=>{
+          if (res.email && res.username && res.questions && res.learning && res.language) {
+            res.user_id = res.user_id
+            res.email = res.email
+            res.username = res.username
+            res.language = res.language
+            res.questions = res.questions
+            res.learning = res.learning
+            this.storage.set('session_storage',res)
+            this.translate.get('ERROR.NOSERVER').subscribe(
+              value => {
+                alertTitle = value;
+              }
+            )
+            this.loadingService.loadingDismiss();
+            this.presentToast(alertTitle)
+            return
+          }else {
+            this.translate.get('ERROR.NOSERVER').subscribe(
+              value => {
+                alertTitle = value;
+              }
+            )
+            this.loadingService.loadingDismiss();
+            this.presentToast(alertTitle)
+            this.router.navigateByUrl('/');
+          }
+        })
+      })
+      body = {
+        aksi: 'getLearning'
+      };
+      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+        if(data.success){
+          for (let i = 0; i < data.result.length; i++) {
+            Learning[i] = data.result[i]
+          }
+          this.storage.get('session_storage').then((res)=>{
+            res.user_id = res.user_id
+            res.email = res.email
+            res.username = res.username
+            res.language = res.language
+            res.questions = Questions
+            res.learning = Learning
+            this.storage.set('session_storage',res)
+          })
+          this.loadingService.loadingDismiss();
+        }
+      });
+    }).catch(() => {
     });
   }
-  ionSplitPaneVisible(){}
-
-  ionChange(){}
 
   ionViewWillEnter() {
     this.menuCtrl.enable(true);
@@ -71,6 +135,14 @@ export class HomeResultsPage {
       componentProps: { value: image }
     });
     return await modal.present();
+  }
+
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
   }
 
 }

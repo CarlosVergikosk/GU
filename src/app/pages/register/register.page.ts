@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NavController, MenuController, LoadingController } from '@ionic/angular';
+import { NavController, MenuController, LoadingController, Platform } from '@ionic/angular';
 import { PostProvider } from 'src/providers/post-provider';
-import { Router } from '@angular/router';
 import { Storage } from '@ionic/Storage';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Network } from '@ionic-native/network/ngx';
 
 @Component({
   selector: 'app-register',
@@ -25,7 +25,8 @@ export class RegisterPage implements OnInit {
     public menuCtrl: MenuController,
     public loadingController: LoadingController,
     private formBuilder: FormBuilder,
-    private router: Router,
+    private platform: Platform,
+    private network: Network,
     private postPvdr: PostProvider,
     private storage: Storage,
     public translate: TranslateService,
@@ -38,7 +39,7 @@ export class RegisterPage implements OnInit {
 
   ngOnInit() {
     this.onRegisterForm = this.formBuilder.group({
-      fullName: [],email: [], password: []
+      fullName: [],email: [], password: [], age: []
       /*fullName: ['', Validators.compose([
         Validators.required, 
         Validators.pattern('[a-zA-Z]*'), 
@@ -55,48 +56,55 @@ export class RegisterPage implements OnInit {
         Validators.minLength(6), 
         Validators.maxLength(12), 
         Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,12}$')])
-      ],*/
+      ],
+      age: ['', Validators.compose([
+        Validators.required
+      ]*/
     });
   }
 
   async prosesRegister(){
-    console.log(this.age)
-    let body = {
-      username: this.username,
-      email: this.email,
-      password: this.password,
-      age: this.age,
-      aksi: 'register'
-    };
-    var registersuccess = null;
-    this.translate.get('REGISTER.SUCESSFULL').subscribe(value => {registersuccess = value;}).toString();
-    this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
-      var alert = data.msg;
-      if(data.success){
-        this.router.navigate(['/']);
-        const toast = await this.toastCtrl.create({
-          message: registersuccess,
-          animated: true,
-          color: "success",
-          duration: 2000
-        });
-        toast.present();
-      }else{
-        const toast = await this.toastCtrl.create({
-          message: alert,
-          duration: 2000
-        });
-        toast.present();
-      }
-    });
-    let dataObj = {
-      "user_id" : null,
-      "email" : this.email,
-      "username" : null,
-      "language" : this.translate.getBrowserLang()
-    }
-    console.log(dataObj)
-    this.storage.set('session_storage', dataObj)
+    this.platform.ready().then(() => {
+      let alertTitle
+      let body = {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+        age: this.age,
+        language: this.translate.getBrowserLang(),
+        aksi: 'register'
+      };
+      var registersuccess = null;
+      this.translate.get('REGISTER.SUCESSFULL').subscribe(value => {registersuccess = value;}).toString();
+      this.postPvdr.postData(body, 'proses-api.php').subscribe(async data =>{
+        var alert = data.msg;
+        if(data.success){
+          this.storage.set('session_storage', body)
+          this.goToLogin()
+          const toast = await this.toastCtrl.create({
+            message: registersuccess,
+            animated: true,
+            color: "success",
+            duration: 2000
+          });
+          toast.present();
+        }else{
+          const toast = await this.toastCtrl.create({
+            message: alert,
+            duration: 2000
+          });
+          toast.present();
+        }
+      },error => 
+      {
+        this.translate.get('ERROR.NOSERVER').subscribe(
+          value => {
+            alertTitle = value;
+          }
+        )
+        this.presentToast(alertTitle)
+      }) 
+    }).catch(() => {});
   }
 
   async signUp() {
@@ -113,7 +121,14 @@ export class RegisterPage implements OnInit {
     });
   }
 
-  // // //
+  async presentToast(message) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: 2000
+    });
+    toast.present();
+  }
+
   goToLogin() {
     this.navCtrl.navigateRoot('/');
   }

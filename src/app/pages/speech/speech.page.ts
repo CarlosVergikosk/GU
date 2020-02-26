@@ -112,7 +112,6 @@ export class SpeechPage {
 
   toggleListenMode():void { 
     this.isListening = this.isListening ? false : true;
-    console.log('listening mode is now : ' + this.isListening);
   }
 
   async presentAlertConfirm() {

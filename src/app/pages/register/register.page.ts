@@ -56,7 +56,10 @@ export class RegisterPage implements OnInit {
         Validators.minLength(6), 
         Validators.maxLength(12), 
         Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,12}$')])
-      ],*/
+      ],
+      age: ['', Validators.compose([
+        Validators.required
+      ]*/
     });
   }
 

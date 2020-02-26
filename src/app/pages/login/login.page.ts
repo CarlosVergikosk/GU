@@ -26,21 +26,19 @@ export class LoginPage implements OnInit {
     public alertCtrl: AlertController,
     public translate: TranslateService,
     public loadingCtrl: LoadingController,
-    private platform: Platform,
-    private statusBar: StatusBar, 
     public loadingService: LoadingService,
+    private storage: Storage,
     private formBuilder: FormBuilder,
     private router: Router,
+    private platform: Platform,
+    private statusBar: StatusBar, 
     private postPvdr: PostProvider,
-    public dataService:DataService,
-  	private storage: Storage
+    public dataService:DataService
   ) {}
   
   ionViewWillEnter() {
     this.menuCtrl.enable(false);
     this.statusBar.hide();
-    this.storage.clear();
-    console.log("clear")
   }
 
   ngOnInit() {
@@ -60,6 +58,11 @@ export class LoginPage implements OnInit {
     });
   }
 
+  ionViewWillLeave() {
+    this.email = null
+    this.password = null
+  }
+
   async prosesLogin(){
     this.platform.ready().then(() => {
       let alertTitle
@@ -75,10 +78,10 @@ export class LoginPage implements OnInit {
           var tipo = null;
           if(data.success){
             tipo = "success";
-            let dataObj = {
+            let dataObj = { 
               "user_id" : null,
               "email" : this.email,
-              "username" : null,
+              "username" : data.result.username,
               "language" : this.translate.getBrowserLang(),
               "questions" : null,
               "learning" : null

@@ -34,6 +34,11 @@ export class SettingsPage implements OnInit {
     });
   }
 
+  Logout() {
+    this.storage.clear();
+    this.navCtrl.navigateRoot('/');
+  }
+
   private initTranslate(language) {
     var self = this;
 
@@ -44,7 +49,6 @@ export class SettingsPage implements OnInit {
         { title: self.translate.instant('APP.MENU'),  url: '/home-results' , icon:'home'},
         { title: self.translate.instant('APP.EDITPROFILE'),  url: '/edit-profile' , icon:'create'},
         { title: self.translate.instant('APP.SETTINGS'),  url: '/settings' , icon:'cog'},
-        { title: self.translate.instant('SETTINGS.LEAVE'),  url: '/' , icon:'log-out'},
         { title: self.translate.instant('APP.ABOUT'),  url: '/about' , icon:'information-circle-outline'}
       ];
     })

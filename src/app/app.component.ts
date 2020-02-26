@@ -43,8 +43,7 @@ export class AppComponent {
           self.appPages[0].title = self.translate.instant('APP.MENU')
           self.appPages[1].title = self.translate.instant('APP.EDITPROFILE')
           self.appPages[2].title = self.translate.instant('APP.SETTINGS')
-          self.appPages[3].title = self.translate.instant('SETTINGS.LEAVE')
-          self.appPages[4].title = self.translate.instant('APP.ABOUT')
+          self.appPages[3].title = self.translate.instant('APP.ABOUT')
         })
       }
     });
@@ -61,7 +60,6 @@ export class AppComponent {
         { title: self.translate.instant('APP.MENU'),  url: '/home-results' , icon:'home'},
         { title: self.translate.instant('APP.EDITPROFILE'),  url: '/edit-profile' , icon:'create'},
         { title: self.translate.instant('APP.SETTINGS'),  url: '/settings' , icon:'cog'},
-        { title: self.translate.instant('SETTINGS.LEAVE'),  url: '/' , icon:'log-out'},
         { title: self.translate.instant('APP.ABOUT'),  url: '/about' , icon:'information-circle-outline'}
       ];
     })

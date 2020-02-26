@@ -26,15 +26,15 @@ export class HomeResultsPage {
     public menuCtrl: MenuController,
     public popoverCtrl: PopoverController,
     public alertCtrl: AlertController,
-    private platform: Platform,
     public loadingCtrl: LoadingController,
-    private router: Router,
     public modalCtrl: ModalController,
     public activeRoute:ActivatedRoute,
     public loadingService: LoadingService,
     public toastCtrl: ToastController,
     public dataService:DataService,
     public translate: TranslateService,
+    private router: Router,
+    private platform: Platform,
     private storage: Storage,
     private postPvdr: PostProvider
   ) {}
@@ -110,7 +110,6 @@ export class HomeResultsPage {
         }
       });
     }).catch(() => {
-      console.log("error")
     });
   }
 

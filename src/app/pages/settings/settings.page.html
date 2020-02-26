@@ -4,6 +4,9 @@
       <ion-back-button color="primary"></ion-back-button>
     </ion-buttons>
     <ion-title color="primary"> {{ 'SETTINGS.SETTINGS' | translate }}</ion-title>
+    <ion-button  slot="end" color="light" (click)='Logout()'> {{ 'SETTINGS.LEAVE' | translate}}
+      <ion-icon slot="icon-only" name="log-out"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 

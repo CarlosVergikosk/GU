@@ -1,3 +1,4 @@
+// IMPORTS //
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -9,7 +10,7 @@ export class AboutPage implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  // NEEDS TO BE DECLARED, BUT NEVER USED //
+  ngOnInit() {}
 
 }

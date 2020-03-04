@@ -1,9 +1,11 @@
+// IMPORTS //
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, Platform } from '@ionic/angular';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import {  NgZone } from '@angular/core';
 import { Storage } from '@ionic/Storage';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-speech',
@@ -12,28 +14,39 @@ import { Storage } from '@ionic/Storage';
 })
 
 export class SpeechPage {
-  Questions = {}
-  corrects = 0
-  index = 0
-  indexMax = 0
-  Question
-  Image
-  Output
-  Correct
-  buttonDisabled = false
-  isListening: boolean = false;
-  matches: Array<String>;
-  constructor(private router: Router, private platform: Platform, public alertController: AlertController,  public speech: SpeechRecognition, private zone: NgZone, private storage: Storage) {
 
-  }
+  // VARIABLES //
+  public Questions = {}
+  public corrects = 0
+  public index = 0
+  public indexMax = 0
+  public Question
+  public Image
+  public Output
+  public Correct
+  public buttonDisabled = false
+  public isListening: boolean = false;
+  public matches: Array<String>;
 
+ // MODULES //
+  constructor(
+    private router: Router, 
+    private platform: Platform, 
+    public alertController: AlertController,  
+    public speech: SpeechRecognition, 
+    private zone: NgZone, 
+    private storage: Storage,
+    public loadingService: LoadingService
+  ) {}
+
+  // LOAD DATA WHEN DEVICE READY //
   ionViewWillEnter(){
-    this.platform.ready().then(() => {
-      this.loadData()
-    }).catch(() => {});
+    this.loadData()
   }
 
+  // LOAD DATA FUNCTION //
   loadData(){ 
+    this.loadingService.loadingPresent();
     this.storage.get('session_storage').then((res)=>{
       let idx = 0
       for (let i = 0; i < Object.keys(res.questions).length; i++) {
@@ -43,10 +56,12 @@ export class SpeechPage {
           idx++
         }
       }
+      this.loadingService.loadingDismiss();
       this.Fill()
     })
   }
 
+  // FILL FORM FUNCTION//
   Fill(){ 
     if (this.index <= this.indexMax) {
       this.buttonDisabled = false
@@ -59,7 +74,7 @@ export class SpeechPage {
       this.presentAlertConfirm()
     }
   }
-
+  // START FUNCTION (ACTIVATE SPEECH API)//
   Start(){
     this.buttonDisabled = true
     if (this.hasPermission())
@@ -73,6 +88,7 @@ export class SpeechPage {
     }
   }
 
+  // DEVICE HASPERMISSION PROMISE //
   async hasPermission():Promise<boolean> {
     try {
       const permission = await this.speech.hasPermission();
@@ -82,6 +98,7 @@ export class SpeechPage {
     }
   }
 
+  // DEVICE GETPERMISSION PROMISE //
   async getPermission():Promise<void> {
     try {
       this.speech.requestPermission();
@@ -90,6 +107,7 @@ export class SpeechPage {
     }
   }
 
+  // DEVICE LISTEN METHOD//
   listen(): void {
     if (this.isListening) {
       this.speech.stopListening();
@@ -110,10 +128,12 @@ export class SpeechPage {
 
   }
 
+  // TOGGLE LISTED MODE METHOD //
   toggleListenMode():void { 
     this.isListening = this.isListening ? false : true;
   }
 
+  // ALERT FUNCTION //
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
       header: 'Parabéns!',
@@ -133,10 +153,12 @@ export class SpeechPage {
     this.goToHome()
   }
 
+  // DELAY FUNCTION //
   async delay(ms: number) {
     await new Promise(resolve => setTimeout(()=>resolve(), ms));
   }
 
+  // GO TO HOME FUNCTION //
   goToHome() {
     this.router.navigateByUrl('home-results')  
   }

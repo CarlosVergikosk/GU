@@ -84,7 +84,9 @@ export class LoginPage implements OnInit {
               "username" : data.result.username,
               "language" : this.translate.getBrowserLang(),
               "questions" : null,
-              "learning" : null
+              "learning" : null,
+              "update" : true,
+              "version" : null
             }
             this.storage.set('session_storage', dataObj);
             this.loadingService.loadingDismiss(); 
@@ -108,6 +110,7 @@ export class LoginPage implements OnInit {
           }
         },error => 
         {
+          console.log(error)
           this.storage.get('session_storage').then((res)=>{
             if ( res ) {
               if (res.email && res.username) {

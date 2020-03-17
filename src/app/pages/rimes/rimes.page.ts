@@ -68,6 +68,7 @@ export class RimesPage {
     this.FourthOption = this.Questions[index]['question_options_4']
     this.Correct = this.Questions[index]['question_result']
     this.Image = this.Questions[index]['question_image']
+    console.log(this.Questions[index]['question_image'])
   }
 
   // RESPONSE FUNCTION //
@@ -118,7 +119,6 @@ export class RimesPage {
         }
       ]
     });
-
     await alert.present();
   }
 

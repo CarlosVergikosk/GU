@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class PostProvider {
-	server: string = "http://192.168.0.111/GU/server_api/"; // default
+	server: string = "http://192.168.1.98/GU/server_api/"; // default
 
 	constructor(public http : Http) {
 

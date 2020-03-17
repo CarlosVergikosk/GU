@@ -45,17 +45,17 @@ export class HomeResultsPage {
   public buttonDisabled4 = true
   public Questions = {}
   public Learning = {}
+  public canUpdate = true
 
   // ON PAGE INIT //
   async ngOnInit() {
-    // START LOADER //
-    this.loadingService.loadingPresent();
     // CHECK SCRIPT VERSION //
+    this.canUpdate = false
     this.checkVersion()
   }
 
   ionViewDidEnter() {
-    // CHECK IF WE NEED TO UPDATE APP //
+    // CHECK IF WE NEED TO UPDATE APP // 
     this.shouldUpdate()
   }
 
@@ -63,9 +63,7 @@ export class HomeResultsPage {
   shouldUpdate() {
     this.storage.get('session_storage').then((res)=>{
       //IF WE NEED TO UPDATE
-      if (res.update) {
-        // START LOADER //
-        this.loadingService.loadingPresent();
+      if (res.update && this.canUpdate) {
         // SINCE NGONINIT COMES FIRST THAN VIEWDIDENTER, WE WILL SET UPDATE TO FALSE (OTHERWISE, WE WOULD UPDATE APP 2X)
         res.update = false
         this.storage.set('session_storage',res)
@@ -103,6 +101,7 @@ export class HomeResultsPage {
       //LOAD DATA //
       this.loadData()
     })
+    this.canUpdate = true
   }
 
   disableButtons(result) {
@@ -116,7 +115,9 @@ export class HomeResultsPage {
   }
 
   // LOAD DATA FUNCTION //
-  async loadData() {
+  loadData() {
+    console.log("loaddata")
+    this.loadingService.loadingPresent();
     // VARIABLES //
     this.buttonDisabled1 = true
     this.buttonDisabled2 = true
@@ -126,12 +127,11 @@ export class HomeResultsPage {
     this.Learning = {}
     // WHEN DEVICE READY //
     this.platform.ready().then(() => {
-      // DECLARATION OF OBJECTS //
-      let alertTitle
       // DEFINE OBJECT "body" TO GET THE QUESTIONS FROM SERVER API //
       let body
       this.storage.get('session_storage').then((res)=>{
-        if (res.email && res.username && res.questions && res.learning && res.language && !res.update) {
+        if (res.email && res.username && res.questions && res.learning && res.language && !res.update && res.questions[0].lang == res.language && res.learning[0].lang == res.language) {
+          console.log("true")
           for (let i = 0; i < Object.keys(res.questions).length; i++) {
             this.disableButtons(res.questions[i])
           }
@@ -143,8 +143,8 @@ export class HomeResultsPage {
           // BUT, BECAUSE WE HAVE LOCAL DATA, WE ALLOW TO USE THE APP //
           return
         }else {
+          console.log("false")
           // POST TO SERVER API //
-          console.log("POST 2")
           body = {
             email : res.email,
             lang: res.language,

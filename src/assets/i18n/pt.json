@@ -1,7 +1,9 @@
 {
     "QUIZZ": {
       "TRUE": "Verdadeiro",
-      "FALSE": "Falso"
+      "FALSE": "Falso",
+      "BACK": "Sair",
+      "YES": "Sim"
     },
   
     "LOGIN": {

@@ -1,9 +1,9 @@
 // IMPORTS //
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
-import {  NgZone } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { Storage } from '@ionic/Storage';
 import { LoadingService } from 'src/app/services/loading.service';
 
@@ -28,10 +28,11 @@ export class SpeechPage {
   public isListening: boolean = false;
   public matches: Array<String>;
 
+  
+
  // MODULES //
   constructor(
-    private router: Router, 
-    private platform: Platform, 
+    private router: Router,
     public alertController: AlertController,  
     public speech: SpeechRecognition, 
     private zone: NgZone, 
@@ -68,23 +69,30 @@ export class SpeechPage {
       this.Question = this.Questions[this.index]['question_label']
       this.Correct = this.Questions[this.index]['question_result']
       this.Image = this.Questions[this.index]['question_image']
-      this.index++
     }
     else {
-      this.presentAlertConfirm()
+      this.goToHome()
     }
   }
   // START FUNCTION (ACTIVATE SPEECH API)//
-  Start(){
+  async Start(){
     this.buttonDisabled = true
     if (this.hasPermission())
       {
-        this.listen()
-        this.corrects++
-        this.Fill()
+        this.speech.stopListening();
+        await this.listen()
+        let header = "Ohh... Tenta novamente!"
+        let msg = "Ajuda: <br> A Primeira letra é um <b>"+ this.Correct[0]+"<b/>";
+        if (this.Output == this.Correct) {
+          this.index++
+          this.corrects++
+          header = "Parabéns! Está certo!"
+          msg = "Clica OK para ir para a próxima questão";
+        }
+        this.presentAlertResult(header, msg)
     } else {
-        this.getPermission()
-        this.Start()
+      this.getPermission()
+      this.Start()
     }
   }
 
@@ -94,7 +102,7 @@ export class SpeechPage {
       const permission = await this.speech.hasPermission();
       return permission;
     } catch(e) {
-      console.log(e);
+
     }
   }
 
@@ -103,26 +111,19 @@ export class SpeechPage {
     try {
       this.speech.requestPermission();
     } catch(e) {
-      console.log(e);
+
     }
   }
 
   // DEVICE LISTEN METHOD//
   listen(): void {
-    if (this.isListening) {
-      this.speech.stopListening();
-      this.toggleListenMode();
-      return;
-    }
-
     this.toggleListenMode();
     let _this = this;
 
     this.speech.startListening()
       .subscribe(matches => {
         _this.zone.run(() => {
-          _this.matches = matches;
-          this.Output[matches.length] = matches;
+          this.Output = matches[0];
         })
       }, error => console.error(error));
 
@@ -132,26 +133,24 @@ export class SpeechPage {
   toggleListenMode():void { 
     this.isListening = this.isListening ? false : true;
   }
-
-  // ALERT FUNCTION //
-  async presentAlertConfirm() {
-    const alert = await this.alertController.create({
-      header: 'Parabéns!',
-      animated: true,
-      message: 'Acertaste <strong>' + this.corrects + '/' + ( this.index++) + '</strong> perguntas!',
-      buttons: [
-        {
-          text: 'MENU',
-          handler: () => {
-            this.goToHome()
+    // ALERT FUNCTION //
+    async presentAlertResult(header, msg) {
+      const alert = await this.alertController.create({
+        header: header,
+        animated: true,
+        message: msg,
+        buttons: [
+          {
+            text: 'OK',
+            handler: () => {
+              this.Fill()
+            }
           }
-        }
-      ]
-    });
-
-    await alert.present();
-    this.goToHome()
-  }
+        ]
+      });
+      await alert.present();
+      //this.goToHome()
+    }
 
   // DELAY FUNCTION //
   async delay(ms: number) {

@@ -148,7 +148,7 @@ export class AppComponent {
       duration: 2000
     });
     toast.present();
-  }
+  } 
 
 }
 

@@ -1,7 +1,9 @@
 {
     "QUIZZ": {
       "TRUE": "True",
-      "FALSE": "False"
+      "FALSE": "False",
+      "BACK": "Back",
+      "YES": "Yes"
     },
   
     "LOGIN": {
@@ -42,7 +44,7 @@
         "LEARN": "Learn",
         "SPEECHQUIZZ": "Speech Quizz",
         "RIMESQUIZZ": "Rimes Quizz",
-        "SYLLABLEQUIZZ": "Syllable Quizz"
+        "OBJECTQUIZZ": "Object Quizz"
     },
 
     "APP": {
